@@ -18,9 +18,9 @@ const workSlides = {
 const projects = [
   { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tencent-toast.png', slides:['/projects/tencent-toast.png'], year:'2026', color:'#F1EEE8', ink:'#111111' },
   { index:'02', title:'外滩黑客松大赛吐司端内设计', english:'Tusi Bund Hackathon', type:'MOBILE UI/UX · ACTIVITY DESIGN', description:'围绕活动信息与多元用户目标，探索吐司端内的活动页面与参与体验。', image:'/projects/demo/tusi-hackathon.jpg', slides:['/projects/demo/tusi-hackathon.jpg'], year:'2026', color:'#18151E', ink:'#FFFFFF' },
-  { index:'03', title:'Ggrape 青提音乐APP视觉设计', english:'G·grape Music App', type:'PRODUCT DESIGN · UI/UX', description:'以情绪化视觉语言重新想象移动音乐体验，让界面本身成为听觉氛围的一部分。', image:workSlides.grape[0], slides:workSlides.grape, year:'2024', color:'#C7E52E', ink:'#111111' },
-  { index:'04', title:'抖音「文字发布」功能体验升级项目', english:'Douyin 「Text Publishing」', type:'UX OPTIMIZATION · INTERACTION', description:'围绕表达门槛与创作效率，重新梳理文字发布链路与创作辅助体验。', image:workSlides.douyin[0], slides:workSlides.douyin, year:'2024', color:'#161616', ink:'#FFFFFF' },
-  { index:'05', title:'「儒释道新说」虎溪三笑 IP形象设计', english:'Huxi Sanxiao', type:'VISUAL DESIGN · CULTURAL IP', description:'从地方文化典故出发，构建角色、视觉体系与可延展的文创产品体验。', image:workSlides.huxi[0], slides:workSlides.huxi, year:'2023', color:'#A53C2D', ink:'#FFFFFF' },
+  { index:'03', title:'Ggrape 青提音乐APP视觉设计', english:'G·grape Music App', type:'PRODUCT DESIGN · UI/UX', description:'以情绪化视觉语言重新想象移动音乐体验，让界面本身成为听觉氛围的一部分。', image:'/figma/work-grape-card.jpg', slides:workSlides.grape, year:'2024', color:'#C7E52E', ink:'#111111' },
+  { index:'04', title:'抖音「文字发布」功能体验升级项目', english:'Douyin 「Text Publishing」', type:'UX OPTIMIZATION · INTERACTION', description:'围绕表达门槛与创作效率，重新梳理文字发布链路与创作辅助体验。', image:'/figma/work-douyin-card.jpg', slides:workSlides.douyin, year:'2024', color:'#161616', ink:'#FFFFFF' },
+  { index:'05', title:'「儒释道新说」虎溪三笑 IP形象设计', english:'Huxi Sanxiao', type:'VISUAL DESIGN · CULTURAL IP', description:'从地方文化典故出发，构建角色、视觉体系与可延展的文创产品体验。', image:'/figma/work-huxi-card.jpg', slides:workSlides.huxi, year:'2023', color:'#A53C2D', ink:'#FFFFFF' },
 ];
 
 const otherWorks = [
@@ -47,6 +47,7 @@ export default function Home() {
   const workMenuRef = useRef<HTMLDivElement>(null);
   const showcaseRef = useRef<HTMLElement>(null);
   const [showcaseIndex, setShowcaseIndex] = useState(0);
+  const [workTheme, setWorkTheme] = useState(false);
   const [hoveredWorkIndex, setHoveredWorkIndex] = useState<string | null>(null);
   const [previewReadyIndex, setPreviewReadyIndex] = useState<string | null>(null);
   const workHoverTimerRef = useRef<number | null>(null);
@@ -111,11 +112,12 @@ export default function Home() {
       cards.forEach((card,index)=>{
         const delta=index-raw;
         const distance=Math.abs(delta);
-        card.style.setProperty('--card-x',`${delta*36}vw`);
-        card.style.setProperty('--card-y',`${Math.min(distance,2.2)*7.5}vh`);
-        card.style.setProperty('--card-r',`${delta*4.8}deg`);
-        card.style.setProperty('--card-scale',`${Math.max(.78,1-distance*.085)}`);
-        card.style.setProperty('--card-opacity',`${distance>2.3?0:Math.max(.25,1-distance*.18)}`);
+        const rotation=delta<=0?-16.54+delta*10.18:-16.54+delta*21.13;
+        card.style.setProperty('--card-x',`${delta*32-5}vw`);
+        card.style.setProperty('--card-y',`${delta*8+1.5}vh`);
+        card.style.setProperty('--card-r',`${rotation}deg`);
+        card.style.setProperty('--card-scale',`${Math.max(.82,1-distance*.035)}`);
+        card.style.setProperty('--card-opacity',`${distance>2.15?0:Math.max(.3,1-distance*.1)}`);
         card.style.zIndex=String(100-Math.round(distance*10));
       });
       const next=Math.round(raw);
@@ -126,6 +128,20 @@ export default function Home() {
     window.addEventListener('scroll',request,{passive:true});
     window.addEventListener('resize',request);
     return ()=>{window.removeEventListener('scroll',request);window.removeEventListener('resize',request);if(frame)window.cancelAnimationFrame(frame)};
+  },[]);
+  useEffect(()=>{
+    const syncTheme=()=>{
+      const work=document.getElementById('work');
+      const footer=document.querySelector('footer');
+      if(!work)return;
+      const marker=window.scrollY+48;
+      const inWork=marker>=work.offsetTop&&(!footer||marker<footer.offsetTop);
+      setWorkTheme(current=>current===inWork?current:inWork);
+    };
+    syncTheme();
+    window.addEventListener('scroll',syncTheme,{passive:true});
+    window.addEventListener('resize',syncTheme);
+    return()=>{window.removeEventListener('scroll',syncTheme);window.removeEventListener('resize',syncTheme)};
   },[]);
   useEffect(()=>{
     const section=document.getElementById('work');
@@ -295,7 +311,7 @@ export default function Home() {
   ];
   return <main>
     <section className="cover" id="top">
-      <nav className="cover-nav">
+      <nav className={`cover-nav ${workTheme?'work-theme':''}`}>
         <a className="cover-logo" href="#top">PUREGAN</a>
         <div className="cover-links"><GooeyNav items={navItems} particleCount={15} particleDistances={[90,10]} particleR={100} initialActiveIndex={-1} animationTime={600} timeVariance={300} colors={[1,2,3,1,2,3,1,4]}/></div>
         <button className="cover-menu" onClick={()=>setMenuOpen(!menuOpen)} aria-label="打开导航">{menuOpen?'CLOSE':'MENU'}</button>
@@ -343,13 +359,13 @@ export default function Home() {
 
     <section className="work work-cards" id="work" ref={showcaseRef} style={{'--project-count':detailWorks.length} as CSSProperties}>
       <div className="card-stage">
-        <header className="card-stage-head"><p>SELECTED WORKS<br/>2023—2026</p><p>SCROLL TO EXPLORE<br/>CLICK TO OPEN</p></header>
-        <div className="card-background" aria-hidden="true"><span>PRO</span><span>JECTS</span><small>{detailWorks[showcaseIndex]?.type.split(' · ')[0]}</small></div>
+        <p className="work-manifesto">AESTHETICS = JUDGMENT + INTUITION</p>
+        <div className="card-background" aria-hidden="true">PROJECTS</div>
         <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=><button className="project-card-stack" type="button" onClick={()=>openWork(p.index)} key={p.index} aria-label={`查看${p.title}项目详情`}>
           <figure><Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index<2} alt={`${p.title}项目封面`}/></figure>
-          <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')}) · {p.type.split(' · ')[0]}</span><h3>{p.english}</h3><p>{p.description}</p><i>↗</i></div>
+          <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><p>{p.description}</p></div><i>↗</i></div>
         </button>)}</div>
-        <div className="card-counter"><b>{String(showcaseIndex+1).padStart(2,'0')}</b><span>/ {String(detailWorks.length).padStart(2,'0')}</span></div>
+        <p className="work-selected">SELECTED WORKS<br/>2023—2026</p>
       </div>
     </section>
     {activeWork&&<div className="project-detail" role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink} as CSSProperties}>

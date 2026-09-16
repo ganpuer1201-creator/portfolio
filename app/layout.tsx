@@ -1,11 +1,17 @@
 import type { Metadata } from 'next';
-import { Krona_One } from 'next/font/google';
+import { Bitter, Krona_One } from 'next/font/google';
 import './globals.css';
 
 const kronaOne = Krona_One({
   variable: '--font-krona',
   subsets: ['latin'],
   weight: '400',
+});
+
+const bitter = Bitter({
+  variable: '--font-bitter',
+  subsets: ['latin'],
+  weight: ['400', '500'],
 });
 
 export const metadata: Metadata = {
@@ -32,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className={`${kronaOne.variable} antialiased`}>
+      <body className={`${kronaOne.variable} ${bitter.variable} antialiased`}>
         {children}
       </body>
     </html>
