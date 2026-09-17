@@ -222,6 +222,39 @@ body{--font-geist-sans:var(--font-sf);--font-geist-mono:var(--font-sf);font-fami
 
 /* Shared control language: text actions use one pill size; icon actions stay circular. */
 :root{--pill-height:52px;--pill-radius:26px}
+
+/* Contact — Side Rays + editorial email treatment */
+.contact-screen{position:relative;isolation:isolate;scroll-margin-top:-95px;min-height:100svh;height:100svh;overflow:hidden;padding:clamp(92px,9vh,132px) 4.2vw 34px;display:grid;grid-template-rows:auto 1fr auto;background:#050507;color:#fff}
+html:has(#contact:target){scroll-padding-top:0}
+.contact-rays{z-index:-3}
+.contact-shade{position:absolute;z-index:-2;inset:0;background:linear-gradient(180deg,rgba(3,3,7,.02),rgba(3,3,7,.08) 42%,rgba(3,3,7,.62)),radial-gradient(circle at 18% 52%,rgba(5,5,8,0),rgba(5,5,8,.34) 76%);pointer-events:none}
+.contact-topline,.contact-bottomline{position:relative;z-index:1;display:grid;grid-template-columns:.55fr 1fr 1fr;align-items:start;text-transform:uppercase}
+.contact-topline span,.contact-topline p,.contact-bottomline p,.contact-bottomline a,.contact-bottomline small{margin:0;font-size:clamp(10px,.92vw,15px);line-height:1.08;letter-spacing:-.025em;font-weight:650}
+.contact-topline p:last-child{text-align:right}
+.contact-main{position:relative;z-index:1;align-self:center;margin-top:1.5vh}
+.contact-main>p{margin:0 0 clamp(18px,2.5vh,34px);font:500 clamp(10px,.86vw,14px)/1 var(--font-bitter);letter-spacing:.13em;text-transform:uppercase}
+.contact-email{display:flex;width:max-content;max-width:100%;flex-direction:column;color:#fff;font-size:clamp(54px,10.3vw,164px);font-weight:520;line-height:.78;letter-spacing:-.082em;text-transform:uppercase}
+.contact-email span{position:relative;display:block;width:max-content;max-width:100%}
+.contact-email span::after{content:"";position:absolute;left:0;right:0;bottom:-.08em;height:max(3px,.045em);background:currentColor;transform-origin:left center;transition:transform .62s cubic-bezier(.19,1,.22,1)}
+.contact-email span:last-child{margin-left:10.8vw;margin-top:.21em}
+.contact-email:hover span::after,.contact-email:focus-visible span::after{animation:contact-underline .78s cubic-bezier(.76,0,.24,1)}
+.contact-email:hover span:first-child,.contact-email:focus-visible span:first-child{transform:translateX(.018em)}
+.contact-email:hover span:last-child,.contact-email:focus-visible span:last-child{transform:translateX(-.018em)}
+.contact-email span{transition:transform .65s cubic-bezier(.16,1,.3,1)}
+@keyframes contact-underline{0%{transform:scaleX(1);transform-origin:right center}45%{transform:scaleX(0);transform-origin:right center}46%{transform-origin:left center}100%{transform:scaleX(1);transform-origin:left center}}
+.contact-bottomline{align-items:end;border-top:1px solid rgba(255,255,255,.28);padding-top:18px}
+.contact-bottomline a{justify-self:center;position:relative;padding-bottom:4px}
+.contact-bottomline a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;transform:scaleX(.2);transform-origin:right;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.contact-bottomline a:hover::after,.contact-bottomline a:focus-visible::after{transform:scaleX(1);transform-origin:left}
+.contact-bottomline small{text-align:right;color:rgba(255,255,255,.62)}
+
+@media(max-width:760px){
+  .contact-screen{height:100svh;min-height:660px;padding:90px 6vw 26px;grid-template-rows:auto 1fr auto}
+  .contact-topline{grid-template-columns:.35fr 1fr 1fr}.contact-topline span,.contact-topline p,.contact-bottomline p,.contact-bottomline a,.contact-bottomline small{font-size:9px}
+  .contact-main{margin-top:-3vh}.contact-main>p{font-size:9px;line-height:1.4;margin-bottom:22px}
+  .contact-email{font-size:13.8vw;line-height:.84;letter-spacing:-.07em}.contact-email span:last-child{margin-left:0;margin-top:.28em}
+  .contact-bottomline{grid-template-columns:1fr auto;gap:20px}.contact-bottomline a{justify-self:end}.contact-bottomline small{display:none}
+}
 .gooey-nav-container nav ul li{height:var(--pill-height)!important;border-radius:var(--pill-radius)!important}
 .gooey-nav-container nav ul li:after,.gooey-nav-container .effect.filter:after{border-radius:var(--pill-radius)!important}
 .gooey-nav-container nav ul li a{height:100%!important}

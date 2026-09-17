@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type WheelEvent } from 'react';
 import GooeyNav from './GooeyNav';
 import StrokeText from './StrokeText';
+import SideRays from './SideRays';
 
 const numberedSlides = (folder:string,count:number) => Array.from({length:count},(_,index)=>`/projects/case-studies/${folder}/${String(index+1).padStart(2,'0')}.webp`);
 const workSlides = {
@@ -370,7 +371,7 @@ export default function Home() {
   const navItems = [
     { label:'ABOUT', href:'#about' },
     { label:'WORK', href:'#work' },
-    { label:'CONTACT', href:'mailto:812544883@qq.com' },
+    { label:'CONTACT', href:'#contact' },
   ];
   return <main>
     <section className="cover" id="top">
@@ -379,7 +380,7 @@ export default function Home() {
         <div className="cover-links"><GooeyNav items={navItems} particleCount={15} particleDistances={[90,10]} particleR={100} initialActiveIndex={-1} animationTime={600} timeVariance={300} colors={[1,2,3,1,2,3,1,4]}/></div>
         <button className="cover-menu" onClick={()=>setMenuOpen(!menuOpen)} aria-label="打开导航">{menuOpen?'CLOSE':'MENU'}</button>
       </nav>
-      {menuOpen&&<div className="mobile-menu"><a href="#about" onClick={()=>setMenuOpen(false)}>ABOUT</a><a href="#work" onClick={()=>setMenuOpen(false)}>WORK</a><a href="mailto:812544883@qq.com">CONTACT</a></div>}
+      {menuOpen&&<div className="mobile-menu"><a href="#about" onClick={()=>setMenuOpen(false)}>ABOUT</a><a href="#work" onClick={()=>setMenuOpen(false)}>WORK</a><a href="#contact" onClick={()=>setMenuOpen(false)}>CONTACT</a></div>}
       <div className="cover-stage">
         <div className="cover-portrait" onPointerMove={trackHero} onPointerLeave={leaveHero}><Image src="/figma/hero-v2.png" fill priority sizes="124vw" alt="甘普尔黑白肖像拼贴" /><span className="hero-crosshair" aria-hidden="true"/></div>
         <div className="hero-lines" aria-hidden="true"><i/><i/><i/><i/><i/></div>
@@ -462,6 +463,15 @@ export default function Home() {
       <button className="detail-gallery-close" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
       <div className="detail-gallery-switch"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
     </div>}
-    <footer><p>LET&apos;S MAKE<br/><span>SOMETHING</span><br/>MEMORABLE.</p><div className="footer-contact"><span>GET IN TOUCH</span><a href="mailto:812544883@qq.com">812544883@qq.com ↗</a><small>© 2026 PUREGAN.</small></div></footer>
+    <footer className="contact-screen" id="contact">
+      <SideRays className="contact-rays" rayColor1="#A855F7" rayColor2="#94A3B8" speed={1.35} intensity={2.75} spread={2.45} origin="top-right" tilt={-9} saturation={1.5} blend={0.58} falloff={1.32} opacity={1}/>
+      <div className="contact-shade" aria-hidden="true"/>
+      <div className="contact-topline"><span>04/</span><p>WANT TO WORK<br/>TOGETHER?</p><p>SEND ME A<br/>MESSAGE</p></div>
+      <div className="contact-main">
+        <p>FEEL FREE TO CONNECT WITH ME</p>
+        <a className="contact-email" href="mailto:812544883@qq.com" aria-label="发送邮件至 812544883@qq.com"><span>812544883@</span><span>QQ.COM</span></a>
+      </div>
+      <div className="contact-bottomline"><p>PUREGAN 甘普尔<br/>VISUAL &amp; USER EXPERIENCE DESIGNER</p><a href="mailto:812544883@qq.com">EMAIL ME ↗</a><small>© 2026 PUREGAN.</small></div>
+    </footer>
   </main>;
 }
