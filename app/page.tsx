@@ -40,10 +40,12 @@ const detailWorks = [...projects,...extendedWorks,...otherWorks];
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeWorkIndex, setActiveWorkIndex] = useState<number | null>(null);
+  const [aboutDetailsOpen, setAboutDetailsOpen] = useState(false);
   const [helloActive, setHelloActive] = useState(false);
   const [helloPhase, setHelloPhase] = useState<'idle'|'enter'|'exit'>('idle');
   const helloText = 'HELLO THERE,';
   const detailTrackRef = useRef<HTMLDivElement>(null);
+  const aboutDetailsRef = useRef<HTMLDivElement>(null);
   const workMenuRef = useRef<HTMLDivElement>(null);
   const showcaseRef = useRef<HTMLElement>(null);
   const [showcaseIndex, setShowcaseIndex] = useState(0);
@@ -242,19 +244,30 @@ export default function Home() {
     return ()=>{document.body.style.overflow=previous;window.removeEventListener('keydown',onKeyDown);if(detailFrameRef.current)window.cancelAnimationFrame(detailFrameRef.current);detailFrameRef.current=0};
   },[activeWorkIndex]);
   useEffect(()=>{
+    if(!aboutDetailsOpen)return;
+    const previous=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    aboutDetailsRef.current?.scrollTo({top:0,behavior:'auto'});
+    const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape')setAboutDetailsOpen(false)};
+    const root=aboutDetailsRef.current;
+    const targets=Array.from(root?.querySelectorAll<HTMLElement>('[data-about-reveal]')??[]);
+    if(!('IntersectionObserver' in window))targets.forEach(target=>target.classList.add('is-visible'));
+    const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}
+    }),{root,threshold:.1,rootMargin:'0px 0px -8% 0px'}):null;
+    targets.forEach(target=>observer?.observe(target));
+    window.addEventListener('keydown',onKeyDown);
+    return()=>{document.body.style.overflow=previous;window.removeEventListener('keydown',onKeyDown);observer?.disconnect()};
+  },[aboutDetailsOpen]);
+  useEffect(()=>{
     if (!('IntersectionObserver' in window)) {setHelloActive(true);return}
     const sections = document.querySelectorAll<HTMLElement>('.figma-about');
-    const reveals = document.querySelectorAll<HTMLElement>('.about-history article,.about-awards');
     sections.forEach(section=>section.classList.add('motion-ready'));
     const sectionObserver = new IntersectionObserver(entries=>entries.forEach(entry=>{
       if (entry.isIntersecting) {entry.target.classList.add('entered');setHelloActive(true);sectionObserver.unobserve(entry.target)}
     }),{threshold:.16,rootMargin:'0px 0px -10% 0px'});
-    const detailObserver = new IntersectionObserver(entries=>entries.forEach(entry=>{
-      if (entry.isIntersecting) {entry.target.classList.add('is-visible');detailObserver.unobserve(entry.target)}
-    }),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
     sections.forEach(section=>sectionObserver.observe(section));
-    reveals.forEach(reveal=>detailObserver.observe(reveal));
-    return ()=>{sectionObserver.disconnect();detailObserver.disconnect();sections.forEach(section=>section.classList.remove('motion-ready'))};
+    return ()=>{sectionObserver.disconnect();sections.forEach(section=>section.classList.remove('motion-ready'))};
   },[]);
   useEffect(()=>{
     if (!helloActive) return;
@@ -327,28 +340,6 @@ export default function Home() {
     frame.classList.add('tracking');
   };
   const leaveHero = (event:PointerEvent<HTMLDivElement>)=>event.currentTarget.classList.remove('tracking');
-  const trackAbout = (event:PointerEvent<HTMLElement>)=>{
-    if (event.pointerType==='touch') return;
-    const section=event.currentTarget,rect=section.getBoundingClientRect();
-    section.style.setProperty('--cursor-x',`${event.clientX-rect.left+30}px`);
-    section.style.setProperty('--cursor-y',`${event.clientY-rect.top-20}px`);
-    section.classList.add('cursor-active');
-    section.classList.toggle('keyword-hover',event.target instanceof Element && Boolean(event.target.closest('.about-keyword')));
-  };
-  const leaveAbout = (event:PointerEvent<HTMLElement>)=>{
-    event.currentTarget.classList.remove('cursor-active','keyword-hover');
-  };
-  const movePortrait = (event:PointerEvent<HTMLDivElement>)=>{
-    if (event.pointerType==='touch') return;
-    const frame=event.currentTarget,rect=frame.getBoundingClientRect();
-    frame.style.setProperty('--photo-x',`${((event.clientX-rect.left)/rect.width-.5)*-24}px`);
-    frame.style.setProperty('--photo-y',`${((event.clientY-rect.top)/rect.height-.5)*-24}px`);
-  };
-  const resetPortrait = (event:PointerEvent<HTMLDivElement>)=>{
-    event.currentTarget.style.setProperty('--photo-x','0px');
-    event.currentTarget.style.setProperty('--photo-y','0px');
-    event.currentTarget.closest('.figma-about')?.classList.remove('photo-hover');
-  };
   const moveWorkPreview = (event:PointerEvent<HTMLDivElement>)=>{
     if(event.pointerType==='touch')return;
     const menu=event.currentTarget;
@@ -405,29 +396,46 @@ export default function Home() {
         <p>视觉与用户体验设计师，关注品牌表达、产品界面与 AI 增强型设计实践。</p></div>
     </section>
 
-    <section className="figma-about" id="about" onPointerMove={trackAbout} onPointerLeave={leaveAbout}>
-      <span className="about-cursor" aria-hidden="true"><i>(</i><i>)</i></span>
+    <section className="figma-about about-redesign" id="about">
       <h2 className={`hello-title hello-${helloPhase}`} aria-label={helloText}>{Array.from(helloText).map((letter,index)=><span className="hello-char" aria-hidden="true" key={`${letter}-${index}`} style={{'--hello-in-delay':`${index*68}ms`,'--hello-out-delay':`${(helloText.length-1-index)*68}ms`} as CSSProperties}>{letter===' '? '\u00A0':letter}</span>)}</h2>
-      <div className="about-identity"><span>甘</span><span>普</span><span>尔</span><small>Pure Gan</small></div>
-      <p className="about-born">出生 01 DECEMBER 2001 来自中国四川省.</p>
-      <p className="about-intro">我是INTJ-A 射手座，兼具理性与感性，也不乏天马行空的想象力——擅长以<span className="about-keyword">视觉设计</span>提升<span className="about-keyword">用户体验</span>，注重细节，随和好沟通，自驱力强。热爱设计行业，乐于突破职能边界，从长期价值的角度思考设计，并持续探索 <span className="about-keyword">AIGC</span> 在设计中的应用。</p>
-      <div className="about-art" onPointerMove={movePortrait} onPointerEnter={event=>event.currentTarget.closest('.figma-about')?.classList.add('photo-hover')} onPointerLeave={resetPortrait}><Image className="about-photo" src="/figma/about-v2.png" fill sizes="(max-width: 760px) 70vw, 25vw" alt="Puregan about me 拼贴肖像"/></div>
-      <Image className="paren paren-left" src="/figma/paren-left.svg" width={79} height={314} alt=""/>
-      <Image className="paren paren-right" src="/figma/paren-right.svg" width={79} height={314} alt=""/>
-      <div className="about-history">
-        <article><h3>教育经历</h3><div><b>西南交通大学</b><small>2024.09 - Now</small><p>设计（视觉传达设计方向）研三在读</p><b>九江学院</b><small>2019.09 - 2023.06</small><p>视觉传达设计 学士学位</p></div></article>
-        <article><h3>实习经历</h3><div><b>腾讯科技（深圳）有限公司</b><em>视觉设计</em><small>2026.04 - 2026.08</small><p>在腾讯 PCG 商业产品部担任视觉设计实习生，参与「吐司」产品及业务项目的视觉/UI设计，覆盖 Web 与移动端场景；协同产品、研发推进方案落地，并探索 AI 在设计生产与工作流提效中的应用。</p></div></article>
-        <article><h3>项目经历</h3><div><b>九江市博物馆文创开发项目</b><em>文创产品&amp;品牌形象</em><small>2022.09 - 2023.06</small><p>针对九江博物馆文创 “数量少、设计弱、缺文化底蕴” 痛点，提取本土典故文化元素进行改良设计，让历史故事以实用文创形式融入日常。作品获校优秀毕业设计留校收藏，获 2 项国家级、4 项省级竞赛奖项，相关论文见刊于《地方大学应用型教育研究》。</p></div></article>
-        <article className="coffee"><div><b>庐山八月咖啡设计项目</b><em>品牌形象&amp;设计策划</em><small>2022.10 - 2023.03</small><p>该项目以独立咖啡馆品牌升级为核心，探索小众场景视觉符号构建，历时半年独立完成需求访谈、调研分析及 VI 落地设计。方案获店铺采纳落地，成果入选校级优秀设计作品集，验证商业与设计美学的融合价值。</p></div></article>
-      </div>
-      <div className="about-awards">
-        <h3>获奖经历</h3>
-        <div><b>三好学生 / 优秀学生干部 / 优秀团干部</b><b>2023届校优秀本科毕业论文（设计）</b><b>校级专业奖学金</b><small>一等 ×3 / 二等 ×1 / 三等 ×2</small></div>
-        <div><b>2025米兰设计周中国高校设计学科师生优秀作品展</b><small>省一等奖</small><b>第十届未来设计师·全国高校数字艺术设计大赛</b><small>全国优秀奖/省一等奖</small><b>第十一届未来设计师·全国高校数字艺术设计大赛</b><small>省一等奖</small></div>
-        <div><b>第十一届全国大学生数字媒体科技作品及创意竞赛</b><small>全国三等奖/省二等奖</small><b>第四届东方创意之星设计大赛</b><small>全国优秀奖/省金奖</small><b>2023 “井冈之星” 设计艺术创意大赛</b><small>学生组金奖</small></div>
-        <div><b>全国大中学生第十届海洋文化创意设计大赛</b><small>佳作奖</small><b>全国高等教育美育教育成果展评</b><small>学生组一等奖</small><b>新生录取通知书设计活动</b><small>二等奖</small></div>
+      <div className="about-collage"><Image src="/figma/about-redesign/about-main.png" fill sizes="(max-width: 760px) 88vw, 42vw" alt="Puregan 的 About Me 拼贴肖像" priority={false}/></div>
+      <Image className="about-emoji about-thought" src="/figma/about-redesign/thought-balloon.png" width={181} height={181} alt="思考气泡"/>
+      <Image className="about-emoji about-crystal" src="/figma/about-redesign/crystal-ball.png" width={161} height={161} alt="水晶球"/>
+      <Image className="about-emoji about-cat" src="/figma/about-redesign/black-cat.png" width={104} height={104} alt="黑猫"/>
+      <div className="about-summary">
+        <div className="about-name"><Image src="/figma/about-redesign/artist-emoji.png" width={32} height={32} alt=""/><b>Puregan</b><span>甘普尔</span></div>
+        <i aria-hidden="true"/>
+        <div><p>我是INTJ-A 射手座，兼具理性与感性，也不乏天马行空的想象力——擅长以视觉设计提升用户体验，注重细节，随和好沟通，自驱力强。热爱设计行业，乐于突破职能边界，从长期价值的角度思考设计，并持续探索 AIGC 在设计中的应用。</p><button type="button" onClick={()=>setAboutDetailsOpen(true)}>Read More<span>↗</span></button></div>
       </div>
     </section>
+
+    {aboutDetailsOpen&&<div className="about-details" ref={aboutDetailsRef} role="dialog" aria-modal="true" aria-label="Puregan 个人经历详情">
+      <button className="about-details-close" type="button" onClick={()=>setAboutDetailsOpen(false)} aria-label="关闭个人经历详情">CLOSE</button>
+      <section className="about-details-hero">
+        <Image src="/figma/about-redesign/readmore-hero.png" fill priority sizes="100vw" alt="Puregan 个人肖像"/>
+        <div className="about-details-gradient" aria-hidden="true"/>
+        <div className="about-details-title"><h2>Puregan</h2><div><b>Visual &amp; User Experience Designer</b><span>2026</span></div></div>
+        <time>（2001.12.01）</time>
+      </section>
+      <section className="about-resume">
+        <article className="about-resume-section" data-about-reveal><h3>Education</h3><div className="about-resume-list">
+          <div><time>2024.09 – Now</time><div><b>西南交通大学（211、双一流）</b><p>设计（视觉传达设计） 研三在读</p></div></div>
+          <div><time>2019.09 – 2023.06</time><div><b>九江学院</b><p>视觉传达设计 学士学位</p></div></div>
+        </div></article>
+        <article className="about-resume-section" data-about-reveal><h3>Internship</h3><div className="about-resume-list">
+          <div><time>2026.04 – 2026.08</time><div><Image className="tencent-logo" src="/figma/about-redesign/tencent-logo.png" width={153} height={46} alt="Tencent 腾讯"/><p>在腾讯 PCG 商业产品部担任视觉设计实习生，参与「吐司」产品及业务项目的视觉/UI 设计，覆盖 Web 与移动端场景；协同产品、研发推进方案落地，并探索 AI 在设计生产与工作流提效中的应用。</p></div></div>
+        </div></article>
+        <article className="about-resume-section" data-about-reveal><h3>Project</h3><div className="about-resume-list">
+          <div><time>2022.09 – 2023.06</time><div><b>九江市博物馆文创产品开发项目</b><p>针对九江博物馆文创“数量少、设计弱、缺文化底蕴”痛点，提取本土典故文化元素进行改良设计，让历史故事以实用文创形式融入日常。作品获校优秀毕业设计留校收藏，获 2 项国家级、4 项省级竞赛奖项，相关论文见刊于《地方大学应用型教育研究》。</p></div></div>
+          <div><time>2022.10 – 2023.03</time><div><b>庐山八月咖啡设计项目</b><p>该项目以独立咖啡馆品牌升级为核心，探索小众场景视觉符号构建，历时半年独立完成需求访谈、调研分析及 VI 落地设计。方案获店铺采纳落地，成果入选校级优秀设计作品集，验证商业与设计美学的融合价值。</p></div></div>
+        </div></article>
+        <article className="about-resume-section" data-about-reveal><h3>Rewards</h3><div className="about-rewards-list">
+          <b>三好学生 / 优秀学生干部 / 优秀团干部</b><b>2023届校优秀本科毕业论文（设计）</b><p><strong>校级专业奖学金</strong><span>一等 ×3 / 二等 ×1 / 三等 ×2</span></p><p><strong>2025米兰设计周中国高校设计学科师生优秀作品展</strong><span>省一等奖</span></p><p><strong>第十届未来设计师·全国高校数字艺术设计大赛</strong><span>全国优秀奖 / 省一等奖</span></p><p><strong>第十一届未来设计师·全国高校数字艺术设计大赛</strong><span>省一等奖</span></p><p><strong>第十一届全国大学生数字媒体科技作品及创意竞赛</strong><span>全国三等奖 / 省二等奖</span></p><p><strong>第四届东方创意之星设计大赛</strong><span>全国优秀奖 / 省金奖</span></p><p><strong>2023 “井冈之星” 设计艺术创意大赛</strong><span>学生组金奖</span></p><p><strong>全国大中学生海洋文化创意设计大赛</strong><span>佳作奖</span></p><p><strong>全国高等教育美育教育成果展评</strong><span>学生组一等奖</span></p><p><strong>新生录取通知书设计活动</strong><span>二等奖</span></p>
+        </div></article>
+        <article className="about-resume-section about-resume-compact" data-about-reveal><h3>Language</h3><p><b>全国大学英语考试</b><span>英语六级 CET-6</span></p></article>
+        <article className="about-resume-section about-resume-contact" data-about-reveal><h3>Contact</h3><div><a href="tel:13036575690"><Image src="/figma/about-redesign/phone.svg" width={28} height={28} alt=""/>13036575690</a><a href="mailto:812544883@qq.com"><Image src="/figma/about-redesign/email.svg" width={28} height={28} alt=""/>812544883@qq.com</a><span><Image src="/figma/about-redesign/wechat.svg" width={28} height={28} alt=""/>B1ackcat_Witch</span></div></article>
+      </section>
+    </div>}
 
     <section className="work work-cards" id="work" ref={showcaseRef} style={{'--project-count':detailWorks.length} as CSSProperties}>
       <div className="card-stage">
