@@ -48,6 +48,7 @@ export default function Home() {
   const showcaseRef = useRef<HTMLElement>(null);
   const [showcaseIndex, setShowcaseIndex] = useState(0);
   const [workTheme, setWorkTheme] = useState(false);
+  const [workEnding, setWorkEnding] = useState(false);
   const [hoveredWorkIndex, setHoveredWorkIndex] = useState<string | null>(null);
   const [previewReadyIndex, setPreviewReadyIndex] = useState<string | null>(null);
   const workHoverTimerRef = useRef<number | null>(null);
@@ -103,27 +104,29 @@ export default function Home() {
     if(!section)return;
     const cards=Array.from(section.querySelectorAll<HTMLElement>('.project-card-stack'));
     const stage=section.querySelector<HTMLElement>('.card-stage');
+    const skillLines=Array.from(section.querySelectorAll<HTMLElement>('.work-capabilities h2 span'));
     let frame=0;
+    let targetTimeline=0;
+    let currentTimeline=0;
+    let initialized=false;
+    let lastFrame=performance.now();
+    let ending=false;
     const clamp=(value:number)=>Math.max(0,Math.min(1,value));
     const smooth=(start:number,end:number,value:number)=>{
       const t=clamp((value-start)/(end-start));
       return t*t*(3-2*t);
     };
     const mix=(from:number,to:number,value:number)=>from+(to-from)*value;
-    const render=()=>{
-      frame=0;
+    const calculateTarget=()=>{
       const rect=section.getBoundingClientRect();
       const travel=Math.max(1,section.offsetHeight-window.innerHeight);
       const progress=Math.max(0,Math.min(1,-rect.top/travel));
+      targetTimeline=progress*totalDuration;
+    };
+    const applyTimeline=(timeline:number)=>{
       // Keep a three-card composition on screen: the previous card exits on
       // the left while the current card lingers in the centre and the next
       // card enters from the right.
-      const cardGap=.8;
-      const cardDuration=3.3;
-      const introDuration=.72;
-      const lastCardEnd=introDuration+(cards.length-1)*cardGap+cardDuration;
-      const totalDuration=lastCardEnd+1.05;
-      const timeline=progress*totalDuration;
       cards.forEach((card,index)=>{
         const start=introDuration+index*cardGap;
         const local=clamp((timeline-start)/cardDuration);
@@ -156,17 +159,42 @@ export default function Home() {
       const next=Math.max(0,Math.min(cards.length-1,Math.round(raw)));
       setShowcaseIndex(current=>current===next?current:next);
       if(stage){
-        const outro=smooth(lastCardEnd-.08,lastCardEnd+.48,timeline);
-        const slogan=smooth(lastCardEnd+.04,lastCardEnd+.82,timeline);
+        const outro=smooth(lastCardEnd-.12,lastCardEnd+.36,timeline);
+        const capabilities=smooth(lastCardEnd-.18,lastCardEnd+.58,timeline);
         stage.style.setProperty('--project-opacity',(1-outro).toFixed(3));
         stage.style.setProperty('--project-y',`${-outro*19}vh`);
-        stage.style.setProperty('--work-slogan-opacity',slogan.toFixed(3));
-        stage.style.setProperty('--work-slogan-y',`${mix(64,0,slogan)}px`);
+        stage.style.setProperty('--capabilities-reveal',capabilities.toFixed(4));
         stage.style.setProperty('--work-chrome-opacity',(1-smooth(lastCardEnd+.02,lastCardEnd+.58,timeline)).toFixed(3));
+        skillLines.forEach((line,index)=>{
+          const reveal=smooth(lastCardEnd+.02+index*.065,lastCardEnd+.38+index*.065,timeline);
+          line.style.setProperty('--skill-opacity',reveal.toFixed(3));
+          line.style.setProperty('--skill-y',`${mix(62,0,reveal)}px`);
+        });
+        const nextEnding=capabilities>.72;
+        if(nextEnding!==ending){ending=nextEnding;setWorkEnding(nextEnding)}
       }
     };
-    const request=()=>{if(!frame)frame=window.requestAnimationFrame(render)};
-    render();
+    const cardGap=.8;
+    const cardDuration=3.3;
+    const introDuration=.72;
+    const lastCardEnd=introDuration+(cards.length-1)*cardGap+cardDuration;
+    const totalDuration=lastCardEnd+1.05;
+    const render=(now:number)=>{
+      frame=0;
+      const elapsed=Math.min(64,now-lastFrame);
+      lastFrame=now;
+      const follow=1-Math.exp(-elapsed/125);
+      currentTimeline+=((targetTimeline-currentTimeline)*follow);
+      if(Math.abs(targetTimeline-currentTimeline)<.0005)currentTimeline=targetTimeline;
+      applyTimeline(currentTimeline);
+      if(Math.abs(targetTimeline-currentTimeline)>.0005)frame=window.requestAnimationFrame(render);
+    };
+    const request=()=>{
+      calculateTarget();
+      if(!initialized){currentTimeline=targetTimeline;initialized=true;applyTimeline(currentTimeline)}
+      else if(!frame){lastFrame=performance.now();frame=window.requestAnimationFrame(render)}
+    };
+    request();
     window.addEventListener('scroll',request,{passive:true});
     window.addEventListener('resize',request);
     return ()=>{window.removeEventListener('scroll',request);window.removeEventListener('resize',request);if(frame)window.cancelAnimationFrame(frame)};
@@ -355,7 +383,7 @@ export default function Home() {
   ];
   return <main>
     <section className="cover" id="top">
-      <nav className={`cover-nav ${workTheme?'work-theme':''}`}>
+      <nav className={`cover-nav ${workTheme?'work-theme':''} ${workEnding?'capabilities-theme':''}`}>
         <a className="cover-logo" href="#top">PUREGAN</a>
         <div className="cover-links"><GooeyNav items={navItems} particleCount={15} particleDistances={[90,10]} particleR={100} initialActiveIndex={-1} animationTime={600} timeVariance={300} colors={[1,2,3,1,2,3,1,4]}/></div>
         <button className="cover-menu" onClick={()=>setMenuOpen(!menuOpen)} aria-label="打开导航">{menuOpen?'CLOSE':'MENU'}</button>
@@ -410,7 +438,11 @@ export default function Home() {
           <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
         </button>)}</div>
         <p className="work-selected">SELECTED WORKS<br/>2023—2026</p>
-        <p className="work-outro-slogan">DESIGNING VISUAL STORIES<br/><span>&amp; DIGITAL EXPERIENCES.</span></p>
+        <div className="work-capabilities" aria-label="设计能力">
+          <p>DESIGN PRACTICE / 2026</p>
+          <h2><span>VISUAL DESIGN</span><span>USER EXPERIENCE</span><span>INTERACTION DESIGN</span><span>VIBE CODING</span><span>AI EXPLORATION</span></h2>
+          <small>VISUAL THINKING · DIGITAL EXPERIENCE · CREATIVE TECHNOLOGY</small>
+        </div>
       </div>
     </section>
     {activeWork&&<div className="project-detail" role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink} as CSSProperties}>
