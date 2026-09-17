@@ -115,28 +115,39 @@ export default function Home() {
       const rect=section.getBoundingClientRect();
       const travel=Math.max(1,section.offsetHeight-window.innerHeight);
       const progress=Math.max(0,Math.min(1,-rect.top/travel));
-      const cardGap=.68;
-      const cardDuration=1.68;
-      const introDuration=.95;
+      // Keep a three-card composition on screen: the previous card exits on
+      // the left while the current card lingers in the centre and the next
+      // card enters from the right.
+      const cardGap=.8;
+      const cardDuration=3.3;
+      const introDuration=.72;
       const lastCardEnd=introDuration+(cards.length-1)*cardGap+cardDuration;
-      const totalDuration=lastCardEnd+1.35;
+      const totalDuration=lastCardEnd+1.05;
       const timeline=progress*totalDuration;
       cards.forEach((card,index)=>{
         const start=introDuration+index*cardGap;
         const local=clamp((timeline-start)/cardDuration);
-        const eased=local<.5?4*local*local*local:1-Math.pow(-2*local+2,3)/2;
-        const visible=smooth(0,.11,local)*(1-smooth(.87,1,local));
-        const centerLift=[-5,7,-2,5,-7,3][index%6];
-        const startY=index%2===0?-25:24;
-        const endY=index%3===0?21:index%3===1?-18:12;
-        const y=Math.pow(1-eased,2)*startY+2*(1-eased)*eased*centerLift+eased*eased*endY;
-        const startRotation=index%2===0?-24:18;
-        const endRotation=index%3===0?15:index%3===1?-20:9;
-        const rotation=mix(startRotation,endRotation,eased)+Math.sin(eased*Math.PI)*([8,-7,5,-5][index%4]);
-        card.style.setProperty('--card-x',`${mix(118,-128,eased)}vw`);
+        const visible=smooth(0,.055,local)*(1-smooth(.945,1,local));
+        const segment=(from:number,to:number,value:number)=>smooth(from,to,value);
+        let x=118;
+        if(local<.2)x=mix(118,44,segment(0,.2,local));
+        else if(local<.38)x=mix(44,14,segment(.2,.38,local));
+        else if(local<.62)x=mix(14,-14,segment(.38,.62,local));
+        else if(local<.8)x=mix(-14,-44,segment(.62,.8,local));
+        else x=mix(-44,-128,segment(.8,1,local));
+        const centerLift=[-7,7,-3,5,-6,4][index%6];
+        const startY=index%2===0?-21:20;
+        const endY=index%3===0?18:index%3===1?-16:11;
+        const path=smooth(0,1,local);
+        const y=Math.pow(1-path,2)*startY+2*(1-path)*path*centerLift+path*path*endY;
+        const startRotation=index%2===0?-21:17;
+        const centerRotation=[-8,7,-4,6,-7,4][index%6];
+        const endRotation=index%3===0?14:index%3===1?-18:8;
+        const rotation=local<.5?mix(startRotation,centerRotation,smooth(0,.5,local)):mix(centerRotation,endRotation,smooth(.5,1,local));
+        card.style.setProperty('--card-x',`${x}vw`);
         card.style.setProperty('--card-y',`${y}vh`);
         card.style.setProperty('--card-r',`${rotation}deg`);
-        card.style.setProperty('--card-scale',`${.9+Math.sin(eased*Math.PI)*.1}`);
+        card.style.setProperty('--card-scale',`${.92+Math.sin(local*Math.PI)*.08}`);
         card.style.setProperty('--card-opacity',visible.toFixed(3));
         card.style.pointerEvents=visible>.35?'auto':'none';
         card.style.zIndex=String(20+index);
@@ -145,8 +156,8 @@ export default function Home() {
       const next=Math.max(0,Math.min(cards.length-1,Math.round(raw)));
       setShowcaseIndex(current=>current===next?current:next);
       if(stage){
-        const outro=smooth(lastCardEnd-.06,lastCardEnd+.72,timeline);
-        const slogan=smooth(lastCardEnd+.18,lastCardEnd+1.02,timeline);
+        const outro=smooth(lastCardEnd-.08,lastCardEnd+.48,timeline);
+        const slogan=smooth(lastCardEnd+.04,lastCardEnd+.82,timeline);
         stage.style.setProperty('--project-opacity',(1-outro).toFixed(3));
         stage.style.setProperty('--project-y',`${-outro*19}vh`);
         stage.style.setProperty('--work-slogan-opacity',slogan.toFixed(3));
