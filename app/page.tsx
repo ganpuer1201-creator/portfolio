@@ -102,26 +102,57 @@ export default function Home() {
     const section=showcaseRef.current;
     if(!section)return;
     const cards=Array.from(section.querySelectorAll<HTMLElement>('.project-card-stack'));
+    const stage=section.querySelector<HTMLElement>('.card-stage');
     let frame=0;
+    const clamp=(value:number)=>Math.max(0,Math.min(1,value));
+    const smooth=(start:number,end:number,value:number)=>{
+      const t=clamp((value-start)/(end-start));
+      return t*t*(3-2*t);
+    };
+    const mix=(from:number,to:number,value:number)=>from+(to-from)*value;
     const render=()=>{
       frame=0;
       const rect=section.getBoundingClientRect();
       const travel=Math.max(1,section.offsetHeight-window.innerHeight);
       const progress=Math.max(0,Math.min(1,-rect.top/travel));
-      const raw=progress*(cards.length-1);
+      const cardGap=.68;
+      const cardDuration=1.68;
+      const introDuration=.95;
+      const lastCardEnd=introDuration+(cards.length-1)*cardGap+cardDuration;
+      const totalDuration=lastCardEnd+1.35;
+      const timeline=progress*totalDuration;
       cards.forEach((card,index)=>{
-        const delta=index-raw;
-        const distance=Math.abs(delta);
-        const rotation=delta<=0?-16.54+delta*10.18:-16.54+delta*21.13;
-        card.style.setProperty('--card-x',`${delta*32-5}vw`);
-        card.style.setProperty('--card-y',`${delta*8+1.5}vh`);
+        const start=introDuration+index*cardGap;
+        const local=clamp((timeline-start)/cardDuration);
+        const eased=local<.5?4*local*local*local:1-Math.pow(-2*local+2,3)/2;
+        const visible=smooth(0,.11,local)*(1-smooth(.87,1,local));
+        const centerLift=[-5,7,-2,5,-7,3][index%6];
+        const startY=index%2===0?-25:24;
+        const endY=index%3===0?21:index%3===1?-18:12;
+        const y=Math.pow(1-eased,2)*startY+2*(1-eased)*eased*centerLift+eased*eased*endY;
+        const startRotation=index%2===0?-24:18;
+        const endRotation=index%3===0?15:index%3===1?-20:9;
+        const rotation=mix(startRotation,endRotation,eased)+Math.sin(eased*Math.PI)*([8,-7,5,-5][index%4]);
+        card.style.setProperty('--card-x',`${mix(118,-128,eased)}vw`);
+        card.style.setProperty('--card-y',`${y}vh`);
         card.style.setProperty('--card-r',`${rotation}deg`);
-        card.style.setProperty('--card-scale',`${Math.max(.82,1-distance*.035)}`);
-        card.style.setProperty('--card-opacity',`${distance>2.15?0:Math.max(.3,1-distance*.1)}`);
-        card.style.zIndex=String(100-Math.round(distance*10));
+        card.style.setProperty('--card-scale',`${.9+Math.sin(eased*Math.PI)*.1}`);
+        card.style.setProperty('--card-opacity',visible.toFixed(3));
+        card.style.pointerEvents=visible>.35?'auto':'none';
+        card.style.zIndex=String(20+index);
       });
-      const next=Math.round(raw);
+      const raw=(timeline-introDuration)/cardGap;
+      const next=Math.max(0,Math.min(cards.length-1,Math.round(raw)));
       setShowcaseIndex(current=>current===next?current:next);
+      if(stage){
+        const outro=smooth(lastCardEnd-.06,lastCardEnd+.72,timeline);
+        const slogan=smooth(lastCardEnd+.18,lastCardEnd+1.02,timeline);
+        stage.style.setProperty('--project-opacity',(1-outro).toFixed(3));
+        stage.style.setProperty('--project-y',`${-outro*19}vh`);
+        stage.style.setProperty('--work-slogan-opacity',slogan.toFixed(3));
+        stage.style.setProperty('--work-slogan-y',`${mix(64,0,slogan)}px`);
+        stage.style.setProperty('--work-chrome-opacity',(1-smooth(lastCardEnd+.02,lastCardEnd+.58,timeline)).toFixed(3));
+      }
     };
     const request=()=>{if(!frame)frame=window.requestAnimationFrame(render)};
     render();
@@ -134,8 +165,10 @@ export default function Home() {
       const work=document.getElementById('work');
       const footer=document.querySelector('footer');
       if(!work)return;
-      const marker=window.scrollY+48;
-      const inWork=marker>=work.offsetTop&&(!footer||marker<footer.offsetTop);
+      const navEdge=window.innerWidth<=760?142:195;
+      const workTop=work.getBoundingClientRect().top;
+      const footerTop=footer?.getBoundingClientRect().top??Number.POSITIVE_INFINITY;
+      const inWork=workTop<=navEdge&&footerTop>navEdge;
       setWorkTheme(current=>current===inWork?current:inWork);
     };
     syncTheme();
@@ -363,9 +396,10 @@ export default function Home() {
         <div className="card-background" aria-hidden="true">PROJECTS</div>
         <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=><button className="project-card-stack" type="button" onClick={()=>openWork(p.index)} key={p.index} aria-label={`查看${p.title}项目详情`}>
           <figure><Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index<2} alt={`${p.title}项目封面`}/></figure>
-          <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><p>{p.description}</p></div><i>↗</i></div>
+          <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
         </button>)}</div>
         <p className="work-selected">SELECTED WORKS<br/>2023—2026</p>
+        <p className="work-outro-slogan">DESIGNING VISUAL STORIES<br/><span>&amp; DIGITAL EXPERIENCES.</span></p>
       </div>
     </section>
     {activeWork&&<div className="project-detail" role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink} as CSSProperties}>
