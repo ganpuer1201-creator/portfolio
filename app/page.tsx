@@ -475,7 +475,7 @@ export default function Home() {
         <div className="card-background" aria-hidden="true">PROJECTS</div>
         <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=><button className={`project-card-stack${activeWork?.index===p.index?' is-transition-source':''}`} data-work-index={p.index} type="button" onClick={event=>openWork(p.index,event)} key={p.index} aria-label={`查看${p.title}项目详情`}>
           <figure><Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index<2} alt={`${p.title}项目封面`}/></figure>
-          <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
+          <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3 className={p.english.startsWith('「')?'bracket-leading':undefined}>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
         </button>)}</div>
         <p className="work-selected">SELECTED WORKS<br/>2023—2026</p>
         <div className="work-capabilities" aria-label="设计能力">
@@ -489,7 +489,7 @@ export default function Home() {
       <div className="detail-backdrop" aria-hidden="true"/>
       <div className="detail-card-morph" aria-hidden="true">
         <figure><Image src={activeWork.image} fill sizes="40vw" priority alt=""/></figure>
-        <div><span>({activeWork.index})</span><h3>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
+        <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
       <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
       <div className="detail-track detail-reveal" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
