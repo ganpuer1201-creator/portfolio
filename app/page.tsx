@@ -459,19 +459,19 @@ export default function Home() {
       <div className="detail-track" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
         {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><Image src={slide} fill sizes="82vw" priority={index===0} loading={index===0?undefined:'lazy'} style={{objectFit:'contain'}} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
       </div>
-      <aside className="detail-gallery-meta"><h2>{activeWork.english}</h2><p>{activeWork.description}</p><dl><div><dt>DATE</dt><dd>{activeWork.year}</dd></div><div><dt>CATEGORY</dt><dd>{activeWork.type}</dd></div></dl></aside>
+      <aside className="detail-gallery-meta"><h2>{activeWork.title}</h2><p>{activeWork.description}</p><dl><div><dt>DATE</dt><dd>{activeWork.year}</dd></div><div><dt>CATEGORY</dt><dd>{activeWork.type}</dd></div></dl></aside>
       <button className="detail-gallery-close" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
       <div className="detail-gallery-switch"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
     </div>}
     <footer className="contact-screen" id="contact">
       <SideRays className="contact-rays" rayColor1="#A855F7" rayColor2="#94A3B8" speed={1.35} intensity={2.75} spread={2.45} origin="top-right" tilt={-9} saturation={1.5} blend={0.58} falloff={1.32} opacity={1}/>
       <div className="contact-shade" aria-hidden="true"/>
-      <div className="contact-topline"><span>04/</span><p>WANT TO WORK<br/>TOGETHER?</p><p>SEND ME A<br/>MESSAGE</p></div>
+      <div className="contact-topline"><p>WANT TO WORK<br/>TOGETHER?</p><p>SEND ME A<br/>MESSAGE</p></div>
       <div className="contact-main">
         <p>FEEL FREE TO CONNECT WITH ME</p>
-        <a className="contact-email" href="mailto:812544883@qq.com" aria-label="发送邮件至 812544883@qq.com"><span>812544883@</span><span>QQ.COM</span></a>
+        <a className="contact-email" href="mailto:812544883@qq.com" aria-label="发送邮件至 812544883@qq.com"><span>812544883@</span><span>qq.com</span></a>
       </div>
-      <div className="contact-bottomline"><p>PUREGAN 甘普尔<br/>VISUAL &amp; USER EXPERIENCE DESIGNER</p><a href="mailto:812544883@qq.com">EMAIL ME ↗</a><small>© 2026 PUREGAN.</small></div>
+      <div className="contact-bottomline"><p>PUREGAN 甘普尔</p><a href="mailto:812544883@qq.com">EMAIL ME ↗</a><small>2026</small></div>
     </footer>
   </main>;
 }
