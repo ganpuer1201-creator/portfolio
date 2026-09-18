@@ -181,6 +181,34 @@ body{--font-geist-sans:var(--font-sf);--font-geist-mono:var(--font-sf);font-fami
 
 @media(max-width:760px){.cover-nav.work-theme{background:#f1f0ed}.work-cards{height:calc((var(--project-count) - 1)*108vh + 150vh)}.card-stage{top:0;height:100svh}.work-manifesto{top:11%;font-size:10px}.work-selected{bottom:2.5%;font-size:10px}.card-background{top:66%;font-size:24vw}.work-capabilities{padding:10vh 5vw}.work-capabilities h2{font-size:9.2vw;line-height:.95}.work-capabilities>p{top:12%}.work-capabilities>small{bottom:9%;width:86%;white-space:normal}.project-card-stack{top:50%;width:68vw;max-height:64vh;padding:12px}.project-card-copy h3{font-size:6.4vw}.project-card-copy h4{font-size:3.4vw}.project-card-notes{grid-template-columns:1fr 34px;margin-top:auto}.project-card-notes em{margin-bottom:7px}.project-card-notes p{font-size:9px}.project-card-copy i{width:34px;height:34px}}
 
+/* Card-to-gallery transition: the selected object becomes the project canvas and returns to its exact card slot. */
+.project-card-stack.is-transition-source{opacity:0!important;pointer-events:none}
+.project-detail{animation:none!important;background:transparent!important;isolation:isolate;perspective:1200px}
+.detail-backdrop{position:absolute;z-index:1;inset:0;background:#050505;opacity:0;will-change:opacity}
+.detail-card-morph{position:fixed;z-index:30;left:var(--origin-left);top:var(--origin-top);width:var(--origin-width);height:var(--origin-height);overflow:hidden;border-radius:var(--origin-radius);background:#050505;color:#fff;box-shadow:0 30px 100px rgba(0,0,0,.32);transform:translateZ(0);transform-origin:center;will-change:left,top,width,height,border-radius,opacity,transform}
+.detail-card-morph>figure{position:absolute;inset:clamp(10px,1vw,19px) clamp(10px,1vw,19px) auto;height:36%;margin:0;overflow:hidden;border-radius:clamp(8px,.61vw,12px);background:#161616;opacity:1;will-change:opacity,transform}
+.detail-card-morph>figure img{object-fit:cover}
+.detail-card-morph>div{position:absolute;left:clamp(18px,1.55vw,30px);right:clamp(18px,1.55vw,30px);top:41%;opacity:1;will-change:opacity,transform}
+.detail-card-morph span{font:400 clamp(10px,.78vw,15px)/1.5 var(--font-bitter),serif;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+.detail-card-morph h3{margin:clamp(8px,.78vw,15px) 0 0;font:500 clamp(28px,2.19vw,42px)/1.1 var(--font-sf);letter-spacing:-.03em;text-transform:uppercase}
+.detail-card-morph h4{margin:clamp(6px,.52vw,10px) 0 0;font:400 clamp(15px,1.25vw,24px)/1.05 "PingFang SC","苹方-简",var(--font-sf)}
+.project-detail .detail-reveal{opacity:0;transform:translate3d(0,24px,0);will-change:opacity,transform}
+.project-detail.detail-motion-opening .detail-card-morph{pointer-events:none}
+.project-detail.detail-motion-open .detail-backdrop{opacity:1;transition:opacity .28s ease .08s}
+.project-detail.detail-motion-open .detail-card-morph{left:0;top:0;width:100vw;height:100svh;border-radius:0;box-shadow:none;opacity:0;transform:translateZ(0);pointer-events:none;transition:left .88s cubic-bezier(.76,0,.24,1),top .88s cubic-bezier(.76,0,.24,1),width .88s cubic-bezier(.76,0,.24,1),height .88s cubic-bezier(.76,0,.24,1),border-radius .68s cubic-bezier(.76,0,.24,1),box-shadow .4s ease,opacity .16s ease .74s}
+.project-detail.detail-motion-open .detail-card-morph>figure{opacity:0;transform:scale(1.12);transition:opacity .36s ease .25s,transform .72s cubic-bezier(.22,1,.36,1) .08s}
+.project-detail.detail-motion-open .detail-card-morph>div{opacity:0;transform:translate3d(0,-28px,0);transition:opacity .26s ease .16s,transform .5s cubic-bezier(.22,1,.36,1) .08s}
+.project-detail.detail-motion-open .detail-reveal{opacity:1;transform:translate3d(0,0,0);transition:opacity .48s ease .62s,transform .7s cubic-bezier(.22,1,.36,1) .54s}
+.project-detail.detail-motion-open .detail-slide{transition-delay:.68s}
+.project-detail.detail-motion-closing .detail-backdrop{opacity:0;transition:opacity .22s ease .08s}
+.project-detail.detail-motion-closing .detail-card-morph{left:var(--origin-left);top:var(--origin-top);width:var(--origin-width);height:var(--origin-height);border-radius:var(--origin-radius);opacity:1;box-shadow:0 30px 100px rgba(0,0,0,.32);transition:left .82s cubic-bezier(.76,0,.24,1) .08s,top .82s cubic-bezier(.76,0,.24,1) .08s,width .82s cubic-bezier(.76,0,.24,1) .08s,height .82s cubic-bezier(.76,0,.24,1) .08s,border-radius .68s cubic-bezier(.76,0,.24,1) .16s,box-shadow .42s ease .35s,opacity .06s linear}
+.project-detail.detail-motion-closing .detail-card-morph>figure{opacity:1;transform:scale(1);transition:opacity .3s ease .06s,transform .7s cubic-bezier(.22,1,.36,1) .08s}
+.project-detail.detail-motion-closing .detail-card-morph>div{opacity:1;transform:translate3d(0,0,0);transition:opacity .26s ease .16s,transform .5s cubic-bezier(.22,1,.36,1) .14s}
+.project-detail.detail-motion-closing .detail-reveal{opacity:0;transform:translate3d(0,18px,0);transition:opacity .18s ease,transform .28s ease}
+
+@media(max-width:760px){.detail-card-morph h3{font-size:6.4vw}.detail-card-morph h4{font-size:3.4vw}}
+@media(prefers-reduced-motion:reduce){.detail-backdrop,.detail-card-morph,.detail-card-morph>figure,.detail-card-morph>div,.project-detail .detail-reveal{transition-duration:.01ms!important;transition-delay:0s!important}}
+
 /* Figma nodes 8:239, 26:5003 and 26:5005 — rebuilt About experience. */
 .about-redesign{height:auto;min-height:900px;aspect-ratio:1920/1500;overflow:hidden;border:0;background:#111;color:#f1f0ed}
 .about-redesign>h2{left:50%;top:9.6%;z-index:6;transform:translateX(-50%);width:max-content;font-size:clamp(38px,2.92vw,56px);text-align:center}

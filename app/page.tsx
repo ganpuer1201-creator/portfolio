@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type WheelEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent, type PointerEvent, type WheelEvent } from 'react';
 import GooeyNav from './GooeyNav';
 import StrokeText from './StrokeText';
 import SideRays from './SideRays';
@@ -41,6 +41,8 @@ const detailWorks = [...projects,...extendedWorks,...otherWorks];
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeWorkIndex, setActiveWorkIndex] = useState<number | null>(null);
+  const [detailMotion, setDetailMotion] = useState<'opening'|'open'|'closing'>('opening');
+  const [detailOrigin, setDetailOrigin] = useState({left:0,top:0,width:0,height:0,radius:24});
   const [aboutDetailsOpen, setAboutDetailsOpen] = useState(false);
   const [helloActive, setHelloActive] = useState(false);
   const [helloPhase, setHelloPhase] = useState<'idle'|'enter'|'exit'>('idle');
@@ -58,13 +60,38 @@ export default function Home() {
   const detailTargetRef = useRef(0);
   const detailFrameRef = useRef(0);
   const detailDragRef = useRef<{pointerId:number;x:number;left:number}|null>(null);
+  const detailMotionTimerRef = useRef<number | null>(null);
   const activeWork = activeWorkIndex===null?null:detailWorks[activeWorkIndex];
-  const openWork = (index:string)=>{
-    const nextIndex=detailWorks.findIndex(work=>work.index===index);
-    if(nextIndex>=0)setActiveWorkIndex(nextIndex);
+  const captureCardOrigin = (card:HTMLElement)=>{
+    const rect=card.getBoundingClientRect();
+    const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
+    setDetailOrigin({left:rect.left,top:rect.top,width:rect.width,height:rect.height,radius});
   };
-  const closeWork = ()=>setActiveWorkIndex(null);
-  const showAdjacentWork = (direction:number)=>setActiveWorkIndex(current=>current===null?null:(current+direction+detailWorks.length)%detailWorks.length);
+  const openWork = (index:string,event?:ReactMouseEvent<HTMLButtonElement>)=>{
+    const nextIndex=detailWorks.findIndex(work=>work.index===index);
+    if(nextIndex<0)return;
+    const card=event?.currentTarget??document.querySelector<HTMLElement>(`.project-card-stack[data-work-index="${index}"]`);
+    if(card)captureCardOrigin(card);
+    setDetailMotion('opening');
+    setActiveWorkIndex(nextIndex);
+  };
+  const closeWork = ()=>{
+    if(activeWorkIndex===null||detailMotion==='closing')return;
+    setDetailMotion('closing');
+    if(detailMotionTimerRef.current)window.clearTimeout(detailMotionTimerRef.current);
+    detailMotionTimerRef.current=window.setTimeout(()=>{
+      setActiveWorkIndex(null);
+      setDetailMotion('opening');
+    },920);
+  };
+  const showAdjacentWork = (direction:number)=>setActiveWorkIndex(current=>{
+    if(current===null)return null;
+    const next=(current+direction+detailWorks.length)%detailWorks.length;
+    const nextWork=detailWorks[next];
+    const card=document.querySelector<HTMLElement>(`.project-card-stack[data-work-index="${nextWork.index}"]`);
+    if(card)captureCardOrigin(card);
+    return next;
+  });
   const moveDetail = (event:WheelEvent<HTMLDivElement>)=>{
     event.preventDefault();
     const track=event.currentTarget;
@@ -240,9 +267,13 @@ export default function Home() {
     document.body.style.overflow='hidden';
     detailTargetRef.current=0;
     detailTrackRef.current?.scrollTo({left:0,behavior:'auto'});
+    let secondFrame=0;
+    const firstFrame=window.requestAnimationFrame(()=>{
+      secondFrame=window.requestAnimationFrame(()=>setDetailMotion(current=>current==='opening'?'open':current));
+    });
     const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape')closeWork()};
     window.addEventListener('keydown',onKeyDown);
-    return ()=>{document.body.style.overflow=previous;window.removeEventListener('keydown',onKeyDown);if(detailFrameRef.current)window.cancelAnimationFrame(detailFrameRef.current);detailFrameRef.current=0};
+    return ()=>{document.body.style.overflow=previous;window.removeEventListener('keydown',onKeyDown);window.cancelAnimationFrame(firstFrame);if(secondFrame)window.cancelAnimationFrame(secondFrame);if(detailMotionTimerRef.current)window.clearTimeout(detailMotionTimerRef.current);if(detailFrameRef.current)window.cancelAnimationFrame(detailFrameRef.current);detailFrameRef.current=0};
   },[activeWorkIndex]);
   useEffect(()=>{
     if(!aboutDetailsOpen)return;
@@ -442,7 +473,7 @@ export default function Home() {
       <div className="card-stage">
         <p className="work-manifesto">AESTHETICS = JUDGMENT + INTUITION</p>
         <div className="card-background" aria-hidden="true">PROJECTS</div>
-        <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=><button className="project-card-stack" type="button" onClick={()=>openWork(p.index)} key={p.index} aria-label={`查看${p.title}项目详情`}>
+        <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=><button className={`project-card-stack${activeWork?.index===p.index?' is-transition-source':''}`} data-work-index={p.index} type="button" onClick={event=>openWork(p.index,event)} key={p.index} aria-label={`查看${p.title}项目详情`}>
           <figure><Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index<2} alt={`${p.title}项目封面`}/></figure>
           <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
         </button>)}</div>
@@ -454,14 +485,19 @@ export default function Home() {
         </div>
       </div>
     </section>
-    {activeWork&&<div className="project-detail" role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink} as CSSProperties}>
-      <header className="detail-gallery-nav"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
-      <div className="detail-track" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
+    {activeWork&&<div className={`project-detail detail-motion-${detailMotion}`} role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink,'--origin-left':`${detailOrigin.left}px`,'--origin-top':`${detailOrigin.top}px`,'--origin-width':`${detailOrigin.width}px`,'--origin-height':`${detailOrigin.height}px`,'--origin-radius':`${detailOrigin.radius}px`} as CSSProperties}>
+      <div className="detail-backdrop" aria-hidden="true"/>
+      <div className="detail-card-morph" aria-hidden="true">
+        <figure><Image src={activeWork.image} fill sizes="40vw" priority alt=""/></figure>
+        <div><span>({activeWork.index})</span><h3>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
+      </div>
+      <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
+      <div className="detail-track detail-reveal" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
         {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><Image src={slide} fill sizes="82vw" priority={index===0} loading={index===0?undefined:'lazy'} style={{objectFit:'contain'}} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
       </div>
-      <aside className="detail-gallery-meta"><h2>{activeWork.title}</h2><p>{activeWork.description}</p><dl><div><dt>DATE</dt><dd>{activeWork.year}</dd></div><div><dt>CATEGORY</dt><dd>{activeWork.type}</dd></div></dl></aside>
-      <button className="detail-gallery-close" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
-      <div className="detail-gallery-switch"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
+      <aside className="detail-gallery-meta detail-reveal"><h2>{activeWork.title}</h2><p>{activeWork.description}</p><dl><div><dt>DATE</dt><dd>{activeWork.year}</dd></div><div><dt>CATEGORY</dt><dd>{activeWork.type}</dd></div></dl></aside>
+      <button className="detail-gallery-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
+      <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
     </div>}
     <footer className="contact-screen" id="contact">
       <SideRays className="contact-rays" rayColor1="#A855F7" rayColor2="#94A3B8" speed={1.35} intensity={2.75} spread={2.45} origin="top-right" tilt={-9} saturation={1.5} blend={0.58} falloff={1.32} opacity={1}/>
