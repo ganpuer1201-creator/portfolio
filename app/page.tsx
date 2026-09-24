@@ -16,8 +16,18 @@ const workSlides = {
   poster:['/projects/case-studies/other/poster-design.webp'],
 };
 
+const tusiCaseMedia = [
+  { kind:'image', src:'/projects/case-studies/tusi/01.jpg', width:2880, height:2742, alt:'吐司官网设计项目封面与项目概览' },
+  { kind:'image', src:'/projects/case-studies/tusi/02.jpg', width:2880, height:9349, alt:'吐司官网设计关键问题、设计策略、视觉配方与 IP 形象' },
+  { kind:'video', src:'/projects/case-studies/tusi/tusi-group.mp4', label:'吐司 IP 角色合照动态展示' },
+  { kind:'image', src:'/projects/case-studies/tusi/03.jpg', width:2880, height:1482, alt:'吐司官网设计项目进程' },
+  { kind:'image', src:'/projects/case-studies/tusi/04.jpg', width:2880, height:8067, alt:'吐司官网 PC 端与移动端界面设计' },
+  { kind:'image', src:'/projects/case-studies/tusi/05.jpg', width:2880, height:6886, alt:'吐司官网动效版本设计' },
+  { kind:'video', src:'/projects/case-studies/tusi/tusi-motion.mp4', label:'吐司官网动效版本完整演示' },
+] as const;
+
 const projects = [
-  { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tencent-toast.png', slides:['/projects/tencent-toast.png'], year:'2026', color:'#F1EEE8', ink:'#111111' },
+  { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tencent-toast.png', slides:tusiCaseMedia.filter(item=>item.kind==='image').map(item=>item.src), year:'2026', color:'#F1EEE8', ink:'#111111' },
   { index:'02', title:'外滩黑客松大赛吐司端内设计', english:'Tusi Bund Hackathon', type:'MOBILE UI/UX · ACTIVITY DESIGN', description:'围绕活动信息与多元用户目标，探索吐司端内的活动页面与参与体验。', image:'/projects/demo/tusi-hackathon.jpg', slides:['/projects/demo/tusi-hackathon.jpg'], year:'2026', color:'#18151E', ink:'#FFFFFF' },
   { index:'03', title:'Ggrape 青提音乐APP视觉设计', english:'G·grape Music App', type:'PRODUCT DESIGN · UI/UX', description:'以情绪化视觉语言重新想象移动音乐体验，让界面本身成为听觉氛围的一部分。', image:'/figma/work-grape-card.jpg', slides:workSlides.grape, year:'2024', color:'#C7E52E', ink:'#111111' },
   { index:'04', title:'抖音「文字发布」功能体验升级项目', english:'Douyin 「Text Publishing」', type:'UX OPTIMIZATION · INTERACTION', description:'围绕表达门槛与创作效率，重新梳理文字发布链路与创作辅助体验。', image:'/figma/work-douyin-card.jpg', slides:workSlides.douyin, year:'2024', color:'#161616', ink:'#FFFFFF' },
@@ -485,19 +495,32 @@ export default function Home() {
         </div>
       </div>
     </section>
-    {activeWork&&<div className={`project-detail detail-motion-${detailMotion}`} role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink,'--origin-left':`${detailOrigin.left}px`,'--origin-top':`${detailOrigin.top}px`,'--origin-width':`${detailOrigin.width}px`,'--origin-height':`${detailOrigin.height}px`,'--origin-radius':`${detailOrigin.radius}px`} as CSSProperties}>
+    {activeWork&&<div className={`project-detail detail-motion-${detailMotion}${activeWork.index==='01'?' is-tusi-case':''}`} role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink,'--origin-left':`${detailOrigin.left}px`,'--origin-top':`${detailOrigin.top}px`,'--origin-width':`${detailOrigin.width}px`,'--origin-height':`${detailOrigin.height}px`,'--origin-radius':`${detailOrigin.radius}px`} as CSSProperties}>
       <div className="detail-backdrop" aria-hidden="true"/>
       <div className="detail-card-morph" aria-hidden="true">
         <figure><Image src={activeWork.image} fill sizes="40vw" priority alt=""/></figure>
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
-      <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
-      <div className="detail-track detail-reveal" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
-        {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><Image src={slide} fill sizes="82vw" priority={index===0} loading={index===0?undefined:'lazy'} style={{objectFit:'contain'}} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
-      </div>
-      <aside className="detail-gallery-meta detail-reveal"><h2>{activeWork.title}</h2><p>{activeWork.description}</p><dl><div><dt>DATE</dt><dd>{activeWork.year}</dd></div><div><dt>CATEGORY</dt><dd>{activeWork.type}</dd></div></dl></aside>
-      <button className="detail-gallery-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
-      <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
+      {activeWork.index==='01'?<>
+        <div className="tusi-case-scroll detail-reveal">
+          <main className="tusi-case-stack">
+            {tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" key={media.src}>
+              <Image src={media.src} width={media.width} height={media.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={90} alt={media.alt}/>
+            </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} key={media.src}>
+              <video src={media.src} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.label}/>
+            </figure>)}
+          </main>
+        </div>
+        <button className="tusi-case-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭吐司官网设计项目">×</button>
+      </>:<>
+        <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
+        <div className="detail-track detail-reveal" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
+          {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><Image src={slide} fill sizes="82vw" priority={index===0} loading={index===0?undefined:'lazy'} style={{objectFit:'contain'}} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
+        </div>
+        <aside className="detail-gallery-meta detail-reveal"><h2>{activeWork.title}</h2><p>{activeWork.description}</p><dl><div><dt>DATE</dt><dd>{activeWork.year}</dd></div><div><dt>CATEGORY</dt><dd>{activeWork.type}</dd></div></dl></aside>
+        <button className="detail-gallery-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
+        <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
+      </>}
     </div>}
     <footer className="contact-screen" id="contact">
       <SideRays className="contact-rays" rayColor1="#A855F7" rayColor2="#94A3B8" speed={1.35} intensity={2.75} spread={2.45} origin="top-right" tilt={-9} saturation={1.5} blend={0.58} falloff={1.32} opacity={1}/>

@@ -168,6 +168,26 @@ body{--font-geist-sans:var(--font-sf);--font-geist-mono:var(--font-sf);font-fami
 @media(max-width:760px){.work-cards{height:calc((var(--project-count) - 1)*86vh + 100vh)}.card-stage{top:70px;height:calc(100svh - 70px);min-height:620px}.card-stage-head{left:5vw;right:5vw;top:18px}.card-background{top:47%;font-size:40vw}.project-card-stack{width:78vw;height:min(68vh,620px);border-radius:22px}.project-card-stack figure{height:52%;border-radius:15px}.project-card-copy{padding:15px 8px 8px}.project-card-copy h3{font-size:8vw}.project-card-copy p{font-size:10px}.card-counter{right:5vw;bottom:18px}.detail-gallery-nav{height:64px;padding:0 5vw}.detail-gallery-nav strong{display:none}.project-detail .detail-track{inset:64px 0 0;gap:12vw;padding:54px 7vw 270px}.project-detail .detail-slide,.project-detail .detail-slide:nth-child(even){flex-basis:86vw;width:86vw;height:auto;margin-top:0;aspect-ratio:16/9}.detail-gallery-meta{left:5vw;bottom:92px;width:90vw;background:linear-gradient(90deg,#050505 86%,transparent)}.detail-gallery-meta h2{font-size:7vw}.detail-gallery-meta>p{max-width:80vw;font-size:10px}.detail-gallery-meta dl{gap:18px;flex-wrap:wrap}.detail-gallery-close{left:5vw;bottom:22px;width:50px;height:50px;transform:none}.detail-gallery-close:hover{transform:rotate(90deg)}.detail-gallery-switch{right:5vw;bottom:40px;gap:18px}}
 @media(prefers-reduced-motion:reduce){.project-card-stack{transition:none}.detail-gallery-close{transition:none}}
 
+/* Tusi case study — a continuous editorial page with recovered Figma videos. */
+.project-detail.is-tusi-case{background:#ebecea!important;color:#111!important}
+.is-tusi-case .detail-backdrop{background:#ebecea}
+.tusi-case-scroll{position:absolute;z-index:2;inset:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;background:#ebecea;scrollbar-width:thin;scrollbar-color:#9b9b9b #ebecea}
+.tusi-case-scroll::-webkit-scrollbar{width:8px}.tusi-case-scroll::-webkit-scrollbar-track{background:#ebecea}.tusi-case-scroll::-webkit-scrollbar-thumb{border:2px solid #ebecea;border-radius:999px;background:#8e8e8e}
+.tusi-case-stack{width:min(100%,1920px);margin:0 auto;background:#fff;box-shadow:0 0 80px rgba(0,0,0,.08)}
+.tusi-case-media{position:relative;width:100%;margin:0;line-height:0;background:#fff}
+.tusi-case-media img,.tusi-case-media video{display:block;width:100%;height:auto}
+.tusi-case-video{background:#f6f5f1}
+.tusi-case-video.is-final{background:#050505}
+.tusi-case-video video{aspect-ratio:auto;object-fit:contain;background:inherit}
+.tusi-case-close{position:fixed;z-index:20;right:clamp(16px,2.1vw,40px);top:clamp(16px,2.1vw,40px);display:grid;width:58px;height:58px;padding:0;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(5,5,5,.8);box-shadow:0 10px 32px rgba(0,0,0,.2);backdrop-filter:blur(14px);color:#fff;font:300 30px/1 var(--font-sf);cursor:pointer;transition:transform .35s cubic-bezier(.22,1,.36,1),background-color .3s ease}
+.tusi-case-close:hover,.tusi-case-close:focus-visible{outline:0;background:#050505;transform:rotate(90deg)}
+
+@media(max-width:760px){
+  .tusi-case-stack{width:100%;box-shadow:none}
+  .tusi-case-close{right:14px;top:14px;width:48px;height:48px;font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){.tusi-case-close{transition:none}}
+
 /* Figma node 19:4749 — 1920 × 1080 Work composition. */
 .cover-nav{transition:background-color .45s ease,color .45s ease}.cover-logo{transition:color .45s ease}.cover-nav.work-theme{background:#f1f0ed;color:#000}.cover-nav.work-theme .cover-logo,.cover-nav.work-theme .cover-menu{color:#000}.cover-nav.work-theme .gooey-nav-container nav ul,.cover-nav.work-theme .gooey-nav-container nav ul li,.cover-nav.work-theme .gooey-nav>a{color:#000;text-shadow:none}.cover-nav.work-theme .gooey-nav-container nav ul li.active,.cover-nav.work-theme .gooey-nav>a.active{color:#fff}.cover-nav.work-theme .gooey-nav-container nav ul li:after,.cover-nav.work-theme .gooey-nav-container .effect.filter:after,.cover-nav.work-theme .gooey-pill{background:#000}.cover-nav.work-theme .gooey-nav-container .effect.text{color:#000}.cover-nav.work-theme .gooey-nav-container .effect.text.active{color:#fff}.cover-nav.work-theme .gooey-nav-container .effect.filter{mix-blend-mode:multiply}.cover-nav.work-theme .gooey-nav-container .effect.filter:before{background:#f1f0ed}.cover-nav.work-theme{--color-1:#000;--color-2:#292929;--color-3:#555;--color-4:#777}
 .cover-nav.work-theme .gooey-nav-container nav ul li.active>a{color:#fff!important}.cover-nav.work-theme .gooey-nav-container nav ul li.active:after{content:""!important;z-index:-1!important;background:#000!important;color:transparent!important}.cover-nav.work-theme .gooey-nav-container .effect.text,.cover-nav.work-theme .gooey-nav-container .effect.text.active{color:#fff!important}.cover-nav.work-theme .gooey-nav-container .effect.filter:after{background:#000!important}
