@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent, type PointerEvent, type WheelEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent, type PointerEvent, type UIEvent as ReactUIEvent, type WheelEvent } from 'react';
 import GooeyNav from './GooeyNav';
 import StrokeText from './StrokeText';
 import SideRays from './SideRays';
@@ -17,31 +17,38 @@ const workSlides = {
 };
 
 const tusiCaseMedia = [
-  { kind:'image', src:'/projects/case-studies/tusi/01.jpg', width:2880, height:2742, alt:'吐司官网设计项目封面与项目概览' },
-  { kind:'image', src:'/projects/case-studies/tusi/02.jpg', width:2880, height:9349, alt:'吐司官网设计关键问题、设计策略、视觉配方与 IP 形象' },
-  { kind:'video', src:'/projects/case-studies/tusi/tusi-group.mp4', label:'吐司 IP 角色合照动态展示' },
-  { kind:'image', src:'/projects/case-studies/tusi/03.jpg', width:2880, height:1482, alt:'吐司官网设计项目进程' },
-  { kind:'image', src:'/projects/case-studies/tusi/04.jpg', width:2880, height:8067, alt:'吐司官网 PC 端与移动端界面设计' },
-  { kind:'image', src:'/projects/case-studies/tusi/05.jpg', width:2880, height:6886, alt:'吐司官网动效版本设计' },
-  { kind:'video', src:'/projects/case-studies/tusi/tusi-motion.mp4', label:'吐司官网动效版本完整演示' },
+  { kind:'image', chapter:0, src:'/projects/case-studies/tusi/01.jpg', width:2880, height:2742, alt:'吐司官网设计项目封面与项目概览' },
+  { kind:'image', chapter:1, src:'/projects/case-studies/tusi/02.jpg', width:2880, height:9349, alt:'吐司官网设计关键问题、设计策略、视觉配方与 IP 形象' },
+  { kind:'video', chapter:2, src:'/projects/case-studies/tusi/tusi-group.mp4', label:'吐司 IP 角色合照动态展示' },
+  { kind:'image', chapter:3, src:'/projects/case-studies/tusi/03.jpg', width:2880, height:1482, alt:'吐司官网设计项目进程' },
+  { kind:'image', chapter:4, src:'/projects/case-studies/tusi/04.jpg', width:2880, height:8067, alt:'吐司官网 PC 端与移动端界面设计' },
+  { kind:'image', chapter:5, src:'/projects/case-studies/tusi/05.jpg', width:2880, height:6886, alt:'吐司官网动效版本设计' },
+  { kind:'video', chapter:5, src:'/projects/case-studies/tusi/tusi-motion.mp4', label:'吐司官网动效版本完整演示' },
 ] as const;
+
+const verticalCaseIndexes = new Set(['01','02','03']);
+const verticalChaptersByIndex:Record<string,string[]> = {
+  '01':['OVERVIEW','STRATEGY','IP','PROCESS','INTERFACE','MOTION'],
+  '02':['OVERVIEW','CASE STUDY'],
+  '03':['OVERVIEW','INTERACTION'],
+};
 
 const projects = [
   { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tusi-website-cover.jpg', slides:tusiCaseMedia.filter(item=>item.kind==='image').map(item=>item.src), year:'2026', color:'#F1EEE8', ink:'#111111' },
   { index:'02', title:'外滩黑客松大赛吐司端内设计', english:'Tusi Bund Hackathon', type:'MOBILE UI/UX · ACTIVITY DESIGN', description:'围绕活动信息与多元用户目标，探索吐司端内的活动页面与参与体验。', image:'/projects/demo/tusi-hackathon.jpg', slides:['/projects/demo/tusi-hackathon.jpg'], year:'2026', color:'#18151E', ink:'#FFFFFF' },
-  { index:'03', title:'Ggrape 青提音乐APP视觉设计', english:'G·grape Music App', type:'PRODUCT DESIGN · UI/UX', description:'以情绪化视觉语言重新想象移动音乐体验，让界面本身成为听觉氛围的一部分。', image:'/figma/work-grape-card.jpg', slides:workSlides.grape, year:'2024', color:'#C7E52E', ink:'#111111' },
-  { index:'04', title:'抖音「文字发布」功能体验升级项目', english:'Douyin 「Text Publishing」', type:'UX OPTIMIZATION · INTERACTION', description:'围绕表达门槛与创作效率，重新梳理文字发布链路与创作辅助体验。', image:'/figma/work-douyin-card.jpg', slides:workSlides.douyin, year:'2024', color:'#161616', ink:'#FFFFFF' },
-  { index:'05', title:'「儒释道新说」虎溪三笑 IP形象设计', english:'Huxi Sanxiao', type:'VISUAL DESIGN · CULTURAL IP', description:'从地方文化典故出发，构建角色、视觉体系与可延展的文创产品体验。', image:'/figma/work-huxi-card.jpg', slides:workSlides.huxi, year:'2023', color:'#A53C2D', ink:'#FFFFFF' },
+  { index:'03', title:'吐司互动玩法探索', english:'Tusi Interaction Play', type:'INTERACTION DESIGN · CONCEPT', description:'从“让好作品被看见”出发，探索脑洞集市、星选榜单与创作者激励机制。', image:'/projects/demo/tusi-interaction.jpg', slides:['/projects/demo/tusi-interaction.jpg'], year:'2026', color:'#6047D9', ink:'#FFFFFF' },
+  { index:'04', title:'Ggrape 青提音乐APP视觉设计', english:'G·grape Music App', type:'PRODUCT DESIGN · UI/UX', description:'以情绪化视觉语言重新想象移动音乐体验，让界面本身成为听觉氛围的一部分。', image:'/figma/work-grape-card.jpg', slides:workSlides.grape, year:'2025', color:'#C7E52E', ink:'#111111' },
+  { index:'05', title:'抖音「文字发布」功能体验升级项目', english:'Douyin 「Text Publishing」', type:'UX OPTIMIZATION · INTERACTION', description:'围绕表达门槛与创作效率，重新梳理文字发布链路与创作辅助体验。', image:'/figma/work-douyin-card.jpg', slides:workSlides.douyin, year:'2025', color:'#161616', ink:'#FFFFFF' },
+  { index:'06', title:'「儒释道新说」虎溪三笑 IP形象设计', english:'Huxi Sanxiao', type:'VISUAL DESIGN · CULTURAL IP', description:'从地方文化典故出发，构建角色、视觉体系与可延展的文创产品体验。', image:'/figma/work-huxi-card.jpg', slides:workSlides.huxi, year:'2025', color:'#A53C2D', ink:'#FFFFFF' },
 ];
 
 const otherWorks = [
-  { index:'09', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2023', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
-  { index:'10', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2022', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
-  { index:'11', english:'Poster Design', title:'海报设计作品', image:workSlides.poster[0], slides:workSlides.poster, type:'VISUAL EXPLORATION', year:'2022—2025', description:'以字体、图形与构成为核心的系列视觉实验。', color:'#202020', ink:'#FFFFFF' },
+  { index:'09', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2024', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
+  { index:'10', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2023', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
+  { index:'11', english:'Poster Design', title:'海报设计作品', image:workSlides.poster[0], slides:workSlides.poster, type:'VISUAL EXPLORATION', year:'2021—2025', description:'以字体、图形与构成为核心的系列视觉实验。', color:'#202020', ink:'#FFFFFF' },
 ];
 
 const extendedWorks = [
-  { index:'06', title:'吐司互动玩法探索', english:'Tusi Interaction Play', type:'INTERACTION DESIGN · CONCEPT', description:'从“让好作品被看见”出发，探索脑洞集市、星选榜单与创作者激励机制。', image:'/projects/demo/tusi-interaction.jpg', slides:['/projects/demo/tusi-interaction.jpg'], year:'2026', color:'#6047D9', ink:'#FFFFFF' },
   { index:'07', title:'Marvis「扬华寻迹」Skill', english:'「Yanghua Quest」 Skill', type:'AI SKILL · PROTOTYPING', description:'将校园文化探索转化为可调用的 AI Skill 体验。', image:'/projects/demo/marvis-skill.jpg', slides:['/projects/demo/marvis-skill.jpg'], year:'2026', color:'#E6C742', ink:'#17130A' },
   { index:'08', title:'吐司「灵感封面」Skill', english:'「Inspiration Cover」 Skill', type:'AI SKILL · DESIGN WORKFLOW', description:'以可复用的 AI 工作流辅助灵感封面的生成与设计表达。', image:'/projects/demo/ai-workflow.jpg', slides:['/projects/demo/ai-workflow.jpg'], year:'2026', color:'#7C3AED', ink:'#FFFFFF' },
 ];
@@ -58,6 +65,7 @@ export default function Home() {
   const [helloPhase, setHelloPhase] = useState<'idle'|'enter'|'exit'>('idle');
   const helloText = 'HELLO THERE,';
   const detailTrackRef = useRef<HTMLDivElement>(null);
+  const verticalScrollRef = useRef<HTMLDivElement>(null);
   const aboutDetailsRef = useRef<HTMLDivElement>(null);
   const workMenuRef = useRef<HTMLDivElement>(null);
   const showcaseRef = useRef<HTMLElement>(null);
@@ -66,12 +74,15 @@ export default function Home() {
   const [workEnding, setWorkEnding] = useState(false);
   const [hoveredWorkIndex, setHoveredWorkIndex] = useState<string | null>(null);
   const [previewReadyIndex, setPreviewReadyIndex] = useState<string | null>(null);
+  const [activeVerticalChapter, setActiveVerticalChapter] = useState(0);
   const workHoverTimerRef = useRef<number | null>(null);
   const detailTargetRef = useRef(0);
   const detailFrameRef = useRef(0);
   const detailDragRef = useRef<{pointerId:number;x:number;left:number}|null>(null);
   const detailMotionTimerRef = useRef<number | null>(null);
   const activeWork = activeWorkIndex===null?null:detailWorks[activeWorkIndex];
+  const isVerticalCase=Boolean(activeWork&&verticalCaseIndexes.has(activeWork.index));
+  const verticalChapters=activeWork?verticalChaptersByIndex[activeWork.index]??[]:[];
   const captureCardOrigin = (card:HTMLElement)=>{
     const rect=card.getBoundingClientRect();
     const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
@@ -138,6 +149,22 @@ export default function Home() {
     detailDragRef.current=null;
     event.currentTarget.classList.remove('is-dragging');
     if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
+  };
+  const syncVerticalChapter=(event:ReactUIEvent<HTMLDivElement>)=>{
+    const scroller=event.currentTarget;
+    const trigger=scroller.getBoundingClientRect().top+scroller.clientHeight*.34;
+    let next=0;
+    scroller.querySelectorAll<HTMLElement>('[data-chapter-index]').forEach(section=>{
+      if(section.getBoundingClientRect().top<=trigger)next=Number(section.dataset.chapterIndex??0);
+    });
+    setActiveVerticalChapter(current=>current===next?current:next);
+  };
+  const goToVerticalChapter=(index:number)=>{
+    const scroller=verticalScrollRef.current;
+    const target=scroller?.querySelector<HTMLElement>(`[data-chapter-index="${index}"]`);
+    if(!scroller||!target)return;
+    const top=target.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop;
+    scroller.scrollTo({top,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   };
   useEffect(()=>{
     const section=showcaseRef.current;
@@ -276,7 +303,9 @@ export default function Home() {
     const previous=document.body.style.overflow;
     document.body.style.overflow='hidden';
     detailTargetRef.current=0;
+    setActiveVerticalChapter(0);
     detailTrackRef.current?.scrollTo({left:0,behavior:'auto'});
+    verticalScrollRef.current?.scrollTo({top:0,behavior:'auto'});
     let secondFrame=0;
     const firstFrame=window.requestAnimationFrame(()=>{
       secondFrame=window.requestAnimationFrame(()=>setDetailMotion(current=>current==='opening'?'open':current));
@@ -295,7 +324,7 @@ export default function Home() {
     const targets=Array.from(root?.querySelectorAll<HTMLElement>('[data-about-reveal]')??[]);
     if(!('IntersectionObserver' in window))targets.forEach(target=>target.classList.add('is-visible'));
     const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>entries.forEach(entry=>{
-      if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}
+      if(entry.isIntersecting){entry.target.classList.add('is-visible');observer?.unobserve(entry.target)}
     }),{root,threshold:.1,rootMargin:'0px 0px -8% 0px'}):null;
     targets.forEach(target=>observer?.observe(target));
     window.addEventListener('keydown',onKeyDown);
@@ -495,32 +524,42 @@ export default function Home() {
         </div>
       </div>
     </section>
-    {activeWork&&<div className={`project-detail detail-motion-${detailMotion}${activeWork.index==='01'?' is-tusi-case':''}`} role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink,'--origin-left':`${detailOrigin.left}px`,'--origin-top':`${detailOrigin.top}px`,'--origin-width':`${detailOrigin.width}px`,'--origin-height':`${detailOrigin.height}px`,'--origin-radius':`${detailOrigin.radius}px`} as CSSProperties}>
+    {activeWork&&<div className={`project-detail detail-motion-${detailMotion}${isVerticalCase?' is-vertical-case':''}`} role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink,'--origin-left':`${detailOrigin.left}px`,'--origin-top':`${detailOrigin.top}px`,'--origin-width':`${detailOrigin.width}px`,'--origin-height':`${detailOrigin.height}px`,'--origin-radius':`${detailOrigin.radius}px`} as CSSProperties}>
       <div className="detail-backdrop" aria-hidden="true"/>
       <div className="detail-card-morph" aria-hidden="true">
         <figure><Image src={activeWork.image} fill sizes="40vw" priority alt=""/></figure>
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
-      {activeWork.index==='01'?<>
-        <div className="tusi-case-scroll detail-reveal">
+      {isVerticalCase?<>
+        <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef} onScroll={syncVerticalChapter}>
           <main className="tusi-case-stack">
-            {tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" key={media.src}>
+            {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" data-chapter-index={media.chapter} key={media.src}>
               <Image src={media.src} width={media.width} height={media.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={90} alt={media.alt}/>
-            </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} key={media.src}>
+            </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} data-chapter-index={media.chapter} key={media.src}>
               <video src={media.src} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.label}/>
-            </figure>)}
+            </figure>):<>
+              <section className="tusi-series-hero" data-chapter-index="0">
+                <span>PROJECT {activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span>
+                <h1>{activeWork.english}</h1><h2>{activeWork.title}</h2><p>{activeWork.description}</p>
+                <dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl>
+              </section>
+              {activeWork.slides.map((slide,index)=><figure className="tusi-case-media tusi-series-slide" data-chapter-index={Math.min(index+1,verticalChapters.length-1)} key={slide}><Image src={slide} width={1600} height={900} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={92} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
+            </>}
           </main>
         </div>
-        <button className="tusi-case-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭吐司官网设计项目">×</button>
+        <aside className="vertical-case-rail detail-reveal">
+          <div className="vertical-case-meta"><span>PROJECT {activeWork.index}</span><strong>{activeWork.english}</strong><small>{activeWork.year} · {activeWork.type.split(' · ')[0]}</small></div>
+          <nav aria-label={`${activeWork.title}章节导航`}>{verticalChapters.map((chapter,index)=><button className={activeVerticalChapter===index?'is-active':undefined} type="button" onClick={()=>goToVerticalChapter(index)} key={chapter}><i/>{chapter}</button>)}</nav>
+        </aside>
       </>:<>
         <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
         <div className="detail-track detail-reveal" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
           {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><Image src={slide} fill sizes="82vw" priority={index===0} loading={index===0?undefined:'lazy'} style={{objectFit:'contain'}} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
         </div>
-        <aside className="detail-gallery-meta detail-reveal"><h2>{activeWork.title}</h2><p>{activeWork.description}</p><dl><div><dt>DATE</dt><dd>{activeWork.year}</dd></div><div><dt>CATEGORY</dt><dd>{activeWork.type}</dd></div></dl></aside>
-        <button className="detail-gallery-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
+        <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h2>{activeWork.english}</h2><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
         <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
       </>}
+      <button className="detail-unified-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
     </div>}
     <footer className="contact-screen" id="contact">
       <SideRays className="contact-rays" rayColor1="#A855F7" rayColor2="#94A3B8" speed={1.35} intensity={2.75} spread={2.45} origin="top-right" tilt={-9} saturation={1.5} blend={0.58} falloff={1.32} opacity={1}/>
