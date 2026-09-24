@@ -103,7 +103,7 @@ export default function Home() {
     detailMotionTimerRef.current=window.setTimeout(()=>{
       setActiveWorkIndex(null);
       setDetailMotion('opening');
-    },920);
+    },720);
   };
   const showAdjacentWork = (direction:number)=>setActiveWorkIndex(current=>{
     if(current===null)return null;
@@ -113,19 +113,30 @@ export default function Home() {
     if(card)captureCardOrigin(card);
     return next;
   });
+  const syncHorizontalSlides=(track:HTMLDivElement)=>{
+    const trackCenter=track.scrollLeft+track.clientWidth/2;
+    const range=Math.max(track.clientWidth*.68,1);
+    track.querySelectorAll<HTMLElement>('.detail-slide').forEach(slide=>{
+      const slideCenter=slide.offsetLeft+slide.offsetWidth/2;
+      const distance=Math.min(1,Math.abs(slideCenter-trackCenter)/range);
+      slide.style.setProperty('--slide-scale',String(1-distance*.055));
+      slide.style.setProperty('--slide-opacity',String(1-distance*.42));
+    });
+  };
   const moveDetail = (event:WheelEvent<HTMLDivElement>)=>{
     event.preventDefault();
     const track=event.currentTarget;
     const max=Math.max(0,track.scrollWidth-track.clientWidth);
     const wheelDelta=Math.abs(event.deltaX)>Math.abs(event.deltaY)?event.deltaX:event.deltaY;
-    const step=Math.max(-320,Math.min(320,wheelDelta*1.18));
+    const step=Math.max(-240,Math.min(240,wheelDelta*.95));
     detailTargetRef.current=Math.max(0,Math.min(max,detailTargetRef.current+step));
     if(detailFrameRef.current)return;
     const glide=()=>{
       const distance=detailTargetRef.current-track.scrollLeft;
-      track.scrollLeft+=distance*.14;
-      if(Math.abs(distance)>.6)detailFrameRef.current=window.requestAnimationFrame(glide);
-      else{track.scrollLeft=detailTargetRef.current;detailFrameRef.current=0}
+      track.scrollLeft+=distance*.105;
+      syncHorizontalSlides(track);
+      if(Math.abs(distance)>.4)detailFrameRef.current=window.requestAnimationFrame(glide);
+      else{track.scrollLeft=detailTargetRef.current;syncHorizontalSlides(track);detailFrameRef.current=0}
     };
     detailFrameRef.current=window.requestAnimationFrame(glide);
   };
@@ -143,6 +154,7 @@ export default function Home() {
     const next=drag.left-(event.clientX-drag.x)*1.2;
     track.scrollLeft=next;
     detailTargetRef.current=next;
+    syncHorizontalSlides(track);
   };
   const endDetailDrag = (event:PointerEvent<HTMLDivElement>)=>{
     if(detailDragRef.current?.pointerId!==event.pointerId)return;
@@ -308,6 +320,7 @@ export default function Home() {
     verticalScrollRef.current?.scrollTo({top:0,behavior:'auto'});
     let secondFrame=0;
     const firstFrame=window.requestAnimationFrame(()=>{
+      if(detailTrackRef.current)syncHorizontalSlides(detailTrackRef.current);
       secondFrame=window.requestAnimationFrame(()=>setDetailMotion(current=>current==='opening'?'open':current));
     });
     const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape')closeWork()};
@@ -548,12 +561,12 @@ export default function Home() {
           </main>
         </div>
         <aside className="vertical-case-rail detail-reveal">
-          <div className="vertical-case-meta"><span>PROJECT {activeWork.index}</span><strong>{activeWork.english}</strong><small>{activeWork.year} · {activeWork.type.split(' · ')[0]}</small></div>
-          <nav aria-label={`${activeWork.title}章节导航`}>{verticalChapters.map((chapter,index)=><button className={activeVerticalChapter===index?'is-active':undefined} type="button" onClick={()=>goToVerticalChapter(index)} key={chapter}><i/>{chapter}</button>)}</nav>
+          <div className="vertical-case-meta"><strong>{activeWork.title}</strong><small>{String(activeVerticalChapter+1).padStart(2,'0')} / {String(verticalChapters.length).padStart(2,'0')}</small></div>
+          <nav aria-label={`${activeWork.title}章节导航`}>{verticalChapters.map((chapter,index)=><button className={activeVerticalChapter===index?'is-active':undefined} type="button" onClick={()=>goToVerticalChapter(index)} aria-label={chapter} title={chapter} key={chapter}><i/><span>{chapter}</span></button>)}</nav>
         </aside>
       </>:<>
         <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
-        <div className="detail-track detail-reveal" ref={detailTrackRef} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
+        <div className="detail-track detail-reveal" ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
           {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><Image src={slide} fill sizes="82vw" priority={index===0} loading={index===0?undefined:'lazy'} style={{objectFit:'contain'}} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
         </div>
         <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h2>{activeWork.english}</h2><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
