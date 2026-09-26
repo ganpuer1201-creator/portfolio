@@ -26,16 +26,24 @@ const tusiCaseMedia = [
   { kind:'video', chapter:5, src:'/projects/case-studies/tusi/tusi-motion.mp4', label:'吐司官网动效版本完整演示' },
 ] as const;
 
+const verticalSlideDimensions:Record<string,{width:number;height:number}> = {
+  '/projects/tusi-hackathon/01.jpg':{width:2880,height:2742},
+  '/projects/tusi-hackathon/02.jpg':{width:2880,height:3409},
+  '/projects/tusi-hackathon/03.jpg':{width:2880,height:2068},
+  '/projects/tusi-hackathon/04.jpg':{width:2880,height:8898},
+  '/projects/tusi-hackathon/05.jpg':{width:2880,height:2973},
+};
+
 const verticalCaseIndexes = new Set(['01','02','03']);
 const verticalChaptersByIndex:Record<string,string[]> = {
   '01':['OVERVIEW','STRATEGY','IP','PROCESS','INTERFACE','MOTION'],
-  '02':['OVERVIEW','CASE STUDY'],
+  '02':['项目背景','关键问题','页面应用','信息规划','模板沉淀'],
   '03':['OVERVIEW','INTERACTION'],
 };
 
 const projects = [
   { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tusi-website-cover.jpg', slides:tusiCaseMedia.filter(item=>item.kind==='image').map(item=>item.src), year:'2026', color:'#F1EEE8', ink:'#111111' },
-  { index:'02', title:'外滩黑客松大赛吐司端内设计', english:'Tusi Bund Hackathon', type:'MOBILE UI/UX · ACTIVITY DESIGN', description:'围绕活动信息与多元用户目标，探索吐司端内的活动页面与参与体验。', image:'/projects/demo/tusi-hackathon.jpg', slides:['/projects/demo/tusi-hackathon.jpg'], year:'2026', color:'#18151E', ink:'#FFFFFF' },
+  { index:'02', title:'外滩黑客松大赛吐司端内设计', english:'Tusi Bund Hackathon', type:'MOBILE UI/UX · ACTIVITY DESIGN', description:'围绕活动信息与多元用户目标，探索吐司端内的活动页面与参与体验。', image:'/projects/tusi-hackathon/cover.jpg', slides:['/projects/tusi-hackathon/01.jpg','/projects/tusi-hackathon/02.jpg','/projects/tusi-hackathon/03.jpg','/projects/tusi-hackathon/04.jpg','/projects/tusi-hackathon/05.jpg'], year:'2026', color:'#18151E', ink:'#FFFFFF' },
   { index:'03', title:'吐司互动玩法探索', english:'Tusi Interaction Play', type:'INTERACTION DESIGN · CONCEPT', description:'从“让好作品被看见”出发，探索脑洞集市、星选榜单与创作者激励机制。', image:'/projects/demo/tusi-interaction.jpg', slides:['/projects/demo/tusi-interaction.jpg'], year:'2026', color:'#6047D9', ink:'#FFFFFF' },
   { index:'04', title:'Ggrape 青提音乐APP视觉设计', english:'G·grape Music App', type:'PRODUCT DESIGN · UI/UX', description:'以情绪化视觉语言重新想象移动音乐体验，让界面本身成为听觉氛围的一部分。', image:'/figma/work-grape-card.jpg', slides:workSlides.grape, year:'2025', color:'#C7E52E', ink:'#111111' },
   { index:'05', title:'抖音「文字发布」功能体验升级项目', english:'Douyin 「Text Publishing」', type:'UX OPTIMIZATION · INTERACTION', description:'围绕表达门槛与创作效率，重新梳理文字发布链路与创作辅助体验。', image:'/figma/work-douyin-card.jpg', slides:workSlides.douyin, year:'2025', color:'#161616', ink:'#FFFFFF' },
@@ -551,12 +559,12 @@ export default function Home() {
             </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} data-chapter-index={media.chapter} key={media.src}>
               <video src={media.src} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.label}/>
             </figure>):<>
-              <section className="tusi-series-hero" data-chapter-index="0">
+              {activeWork.index!=='02'&&<section className="tusi-series-hero" data-chapter-index="0">
                 <span>PROJECT {activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span>
                 <h1>{activeWork.english}</h1><h2>{activeWork.title}</h2><p>{activeWork.description}</p>
                 <dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl>
-              </section>
-              {activeWork.slides.map((slide,index)=><figure className="tusi-case-media tusi-series-slide" data-chapter-index={Math.min(index+1,verticalChapters.length-1)} key={slide}><Image src={slide} width={1600} height={900} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={92} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
+              </section>}
+              {activeWork.slides.map((slide,index)=>{const dimensions=verticalSlideDimensions[slide]??{width:1600,height:900};return <figure className="tusi-case-media tusi-series-slide" data-chapter-index={activeWork.index==='02'?index:Math.min(index+1,verticalChapters.length-1)} key={slide}><Image src={slide} width={dimensions.width} height={dimensions.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={92} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>})}
             </>}
           </main>
         </div>
