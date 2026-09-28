@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent, type PointerEvent, type UIEvent as ReactUIEvent, type WheelEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent, type PointerEvent, type WheelEvent } from 'react';
 import GooeyNav from './GooeyNav';
 import StrokeText from './StrokeText';
 import SideRays from './SideRays';
@@ -17,48 +17,38 @@ const workSlides = {
 };
 
 const tusiCaseMedia = [
-  { kind:'image', chapter:0, src:'/projects/case-studies/tusi/01.jpg', width:2880, height:2742, alt:'吐司官网设计项目封面与项目概览' },
-  { kind:'image', chapter:1, src:'/projects/case-studies/tusi/02.jpg', width:2880, height:9349, alt:'吐司官网设计关键问题、设计策略、视觉配方与 IP 形象' },
-  { kind:'video', chapter:2, src:'/projects/case-studies/tusi/tusi-group.mp4', label:'吐司 IP 角色合照动态展示' },
-  { kind:'image', chapter:3, src:'/projects/case-studies/tusi/03.jpg', width:2880, height:1482, alt:'吐司官网设计项目进程' },
-  { kind:'image', chapter:4, src:'/projects/case-studies/tusi/04.jpg', width:2880, height:8067, alt:'吐司官网 PC 端与移动端界面设计' },
-  { kind:'image', chapter:5, src:'/projects/case-studies/tusi/05.jpg', width:2880, height:6886, alt:'吐司官网动效版本设计' },
-  { kind:'video', chapter:5, src:'/projects/case-studies/tusi/tusi-motion.mp4', label:'吐司官网动效版本完整演示' },
+  { kind:'image', src:'/projects/case-studies/tusi/01.webp', width:2880, height:2742, alt:'吐司官网设计项目封面与项目概览' },
+  { kind:'image', src:'/projects/case-studies/tusi/02.webp', width:2880, height:9349, alt:'吐司官网设计关键问题、设计策略、视觉配方与 IP 形象' },
+  { kind:'video', src:'/projects/case-studies/tusi/tusi-group.mp4', label:'吐司 IP 角色合照动态展示' },
+  { kind:'image', src:'/projects/case-studies/tusi/03.webp', width:2880, height:1482, alt:'吐司官网设计项目进程' },
+  { kind:'image', src:'/projects/case-studies/tusi/04.webp', width:2880, height:8067, alt:'吐司官网 PC 端与移动端界面设计' },
+  { kind:'image', src:'/projects/case-studies/tusi/05.webp', width:2880, height:6886, alt:'吐司官网动效版本设计' },
+  { kind:'video', src:'/projects/case-studies/tusi/tusi-motion.mp4', label:'吐司官网动效版本完整演示' },
 ] as const;
 
 const verticalSlideDimensions:Record<string,{width:number;height:number}> = {
-  '/projects/tusi-hackathon/01.jpg':{width:2880,height:2742},
-  '/projects/tusi-hackathon/02.jpg':{width:2880,height:3409},
-  '/projects/tusi-hackathon/03.jpg':{width:2880,height:2068},
-  '/projects/tusi-hackathon/04.jpg':{width:2880,height:8898},
-  '/projects/tusi-hackathon/05.jpg':{width:2880,height:2973},
-  '/projects/tusi-interaction/01.jpg':{width:2880,height:4905},
-  '/projects/tusi-interaction/02.jpg':{width:2880,height:1971},
-  '/projects/tusi-interaction/03.jpg':{width:2880,height:1111},
-  '/projects/tusi-interaction/04.jpg':{width:2880,height:2298},
-  '/projects/tusi-interaction/05.jpg':{width:2880,height:2880},
-  '/projects/tusi-interaction/06.jpg':{width:2880,height:1620},
-  '/projects/tusi-interaction/07.jpg':{width:2880,height:1111},
-  '/projects/tusi-interaction/08.jpg':{width:2880,height:2457},
-  '/projects/tusi-interaction/09.jpg':{width:2880,height:2473},
+  '/projects/tusi-hackathon/01.webp':{width:2880,height:2742},
+  '/projects/tusi-hackathon/02.webp':{width:2880,height:3409},
+  '/projects/tusi-hackathon/03.webp':{width:2880,height:2068},
+  '/projects/tusi-hackathon/04.webp':{width:2880,height:8898},
+  '/projects/tusi-hackathon/05.webp':{width:2880,height:2973},
+  '/projects/tusi-interaction/01.webp':{width:2880,height:4905},
+  '/projects/tusi-interaction/02.webp':{width:2880,height:1971},
+  '/projects/tusi-interaction/03.webp':{width:2880,height:1111},
+  '/projects/tusi-interaction/04.webp':{width:2880,height:2298},
+  '/projects/tusi-interaction/05.webp':{width:2880,height:2880},
+  '/projects/tusi-interaction/06.webp':{width:2880,height:1620},
+  '/projects/tusi-interaction/07.webp':{width:2880,height:1111},
+  '/projects/tusi-interaction/08.webp':{width:2880,height:2457},
+  '/projects/tusi-interaction/09.webp':{width:2880,height:2473},
 };
 
 const verticalCaseIndexes = new Set(['01','02','03']);
-const verticalChaptersByIndex:Record<string,string[]> = {
-  '01':['OVERVIEW','STRATEGY','IP','PROCESS','INTERFACE','MOTION'],
-  '02':['项目背景','关键问题','页面应用','信息规划','模板沉淀'],
-  '03':['项目背景','策略框架','脑洞集市','星选榜单','贴纸互动'],
-};
-
-const verticalChapterIndexBySlide:Record<string,number[]> = {
-  '02':[0,1,2,3,4],
-  '03':[0,1,2,2,2,2,3,3,4],
-};
 
 const projects = [
-  { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tusi-website-cover.jpg', slides:tusiCaseMedia.filter(item=>item.kind==='image').map(item=>item.src), year:'2026', color:'#F1EEE8', ink:'#111111' },
-  { index:'02', title:'外滩黑客松大赛吐司端内设计', english:'Tusi Bund Hackathon', type:'MOBILE UI/UX · ACTIVITY DESIGN', description:'围绕活动信息与多元用户目标，探索吐司端内的活动页面与参与体验。', image:'/projects/tusi-hackathon/cover.jpg', slides:['/projects/tusi-hackathon/01.jpg','/projects/tusi-hackathon/02.jpg','/projects/tusi-hackathon/03.jpg','/projects/tusi-hackathon/04.jpg','/projects/tusi-hackathon/05.jpg'], year:'2026', color:'#18151E', ink:'#FFFFFF' },
-  { index:'03', title:'吐司互动玩法探索', english:'Tusi Interaction Play', type:'INTERACTION DESIGN · PRODUCT EXPLORATION', description:'以脑洞集市与星选榜单连接创作前后的体验断点，探索从发现灵感、接招创作到获得投星与贴纸反馈的持续参与循环。', image:'/projects/tusi-interaction/cover.jpg', slides:['/projects/tusi-interaction/01.jpg','/projects/tusi-interaction/02.jpg','/projects/tusi-interaction/03.jpg','/projects/tusi-interaction/04.jpg','/projects/tusi-interaction/05.jpg','/projects/tusi-interaction/06.jpg','/projects/tusi-interaction/07.jpg','/projects/tusi-interaction/08.jpg','/projects/tusi-interaction/09.jpg'], year:'2026', color:'#0A0906', ink:'#FFFFFF' },
+  { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tusi-website-cover.webp', slides:tusiCaseMedia.filter(item=>item.kind==='image').map(item=>item.src), year:'2026', color:'#F1EEE8', ink:'#111111' },
+  { index:'02', title:'外滩黑客松大赛吐司端内设计', english:'Tusi Bund Hackathon', type:'MOBILE UI/UX · ACTIVITY DESIGN', description:'围绕活动信息与多元用户目标，探索吐司端内的活动页面与参与体验。', image:'/projects/tusi-hackathon/cover.webp', slides:['/projects/tusi-hackathon/01.webp','/projects/tusi-hackathon/02.webp','/projects/tusi-hackathon/03.webp','/projects/tusi-hackathon/04.webp','/projects/tusi-hackathon/05.webp'], year:'2026', color:'#18151E', ink:'#FFFFFF' },
+  { index:'03', title:'吐司互动玩法探索', english:'Tusi Interaction Play', type:'INTERACTION DESIGN · PRODUCT EXPLORATION', description:'以脑洞集市与星选榜单连接创作前后的体验断点，探索从发现灵感、接招创作到获得投星与贴纸反馈的持续参与循环。', image:'/projects/tusi-interaction/cover.webp', slides:['/projects/tusi-interaction/01.webp','/projects/tusi-interaction/02.webp','/projects/tusi-interaction/03.webp','/projects/tusi-interaction/04.webp','/projects/tusi-interaction/05.webp','/projects/tusi-interaction/06.webp','/projects/tusi-interaction/07.webp','/projects/tusi-interaction/08.webp','/projects/tusi-interaction/09.webp'], year:'2026', color:'#0A0906', ink:'#FFFFFF' },
   { index:'04', title:'Ggrape 青提音乐APP视觉设计', english:'G·grape Music App', type:'PRODUCT DESIGN · UI/UX', description:'以情绪化视觉语言重新想象移动音乐体验，让界面本身成为听觉氛围的一部分。', image:'/figma/work-grape-card.jpg', slides:workSlides.grape, year:'2025', color:'#C7E52E', ink:'#111111' },
   { index:'05', title:'抖音「文字发布」功能体验升级项目', english:'Douyin 「Text Publishing」', type:'UX OPTIMIZATION · INTERACTION', description:'围绕表达门槛与创作效率，重新梳理文字发布链路与创作辅助体验。', image:'/figma/work-douyin-card.jpg', slides:workSlides.douyin, year:'2025', color:'#161616', ink:'#FFFFFF' },
   { index:'06', title:'「儒释道新说」虎溪三笑 IP形象设计', english:'Huxi Sanxiao', type:'VISUAL DESIGN · CULTURAL IP', description:'从地方文化典故出发，构建角色、视觉体系与可延展的文创产品体验。', image:'/figma/work-huxi-card.jpg', slides:workSlides.huxi, year:'2025', color:'#A53C2D', ink:'#FFFFFF' },
@@ -76,6 +66,29 @@ const extendedWorks = [
 ];
 
 const detailWorks = [...projects,...extendedWorks,...otherWorks];
+
+function LazyLoopVideo({src,label}:{src:string;label:string}) {
+  const videoRef=useRef<HTMLVideoElement>(null);
+  useEffect(()=>{
+    const video=videoRef.current;
+    if(!video)return;
+    const observer=new IntersectionObserver(entries=>{
+      const entry=entries[0];
+      if(entry.isIntersecting){
+        if(!video.src){
+          video.src=src;
+          video.load();
+        }
+        void video.play().catch(()=>undefined);
+      }else{
+        video.pause();
+      }
+    },{rootMargin:'320px 0px',threshold:.01});
+    observer.observe(video);
+    return ()=>observer.disconnect();
+  },[src]);
+  return <video ref={videoRef} muted loop playsInline controls preload="none" aria-label={label}/>;
+}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -96,7 +109,6 @@ export default function Home() {
   const [workEnding, setWorkEnding] = useState(false);
   const [hoveredWorkIndex, setHoveredWorkIndex] = useState<string | null>(null);
   const [previewReadyIndex, setPreviewReadyIndex] = useState<string | null>(null);
-  const [activeVerticalChapter, setActiveVerticalChapter] = useState(0);
   const workHoverTimerRef = useRef<number | null>(null);
   const detailTargetRef = useRef(0);
   const detailFrameRef = useRef(0);
@@ -104,7 +116,6 @@ export default function Home() {
   const detailMotionTimerRef = useRef<number | null>(null);
   const activeWork = activeWorkIndex===null?null:detailWorks[activeWorkIndex];
   const isVerticalCase=Boolean(activeWork&&verticalCaseIndexes.has(activeWork.index));
-  const verticalChapters=activeWork?verticalChaptersByIndex[activeWork.index]??[]:[];
   const captureCardOrigin = (card:HTMLElement)=>{
     const rect=card.getBoundingClientRect();
     const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
@@ -183,22 +194,6 @@ export default function Home() {
     detailDragRef.current=null;
     event.currentTarget.classList.remove('is-dragging');
     if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
-  };
-  const syncVerticalChapter=(event:ReactUIEvent<HTMLDivElement>)=>{
-    const scroller=event.currentTarget;
-    const trigger=scroller.getBoundingClientRect().top+scroller.clientHeight*.34;
-    let next=0;
-    scroller.querySelectorAll<HTMLElement>('[data-chapter-index]').forEach(section=>{
-      if(section.getBoundingClientRect().top<=trigger)next=Number(section.dataset.chapterIndex??0);
-    });
-    setActiveVerticalChapter(current=>current===next?current:next);
-  };
-  const goToVerticalChapter=(index:number)=>{
-    const scroller=verticalScrollRef.current;
-    const target=scroller?.querySelector<HTMLElement>(`[data-chapter-index="${index}"]`);
-    if(!scroller||!target)return;
-    const top=target.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop;
-    scroller.scrollTo({top,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   };
   useEffect(()=>{
     const section=showcaseRef.current;
@@ -337,7 +332,6 @@ export default function Home() {
     const previous=document.body.style.overflow;
     document.body.style.overflow='hidden';
     detailTargetRef.current=0;
-    setActiveVerticalChapter(0);
     detailTrackRef.current?.scrollTo({left:0,behavior:'auto'});
     verticalScrollRef.current?.scrollTo({top:0,behavior:'auto'});
     let secondFrame=0;
@@ -487,7 +481,7 @@ export default function Home() {
       </nav>
       {menuOpen&&<div className="mobile-menu"><a href="#about" onClick={()=>setMenuOpen(false)}>ABOUT</a><a href="#work" onClick={()=>setMenuOpen(false)}>WORK</a><a href="#contact" onClick={()=>setMenuOpen(false)}>CONTACT</a></div>}
       <div className="cover-stage">
-        <div className="cover-portrait" onPointerMove={trackHero} onPointerLeave={leaveHero}><Image src="/figma/hero-v2.png" fill priority sizes="124vw" alt="甘普尔黑白肖像拼贴" /><span className="hero-crosshair" aria-hidden="true"/></div>
+        <div className="cover-portrait" onPointerMove={trackHero} onPointerLeave={leaveHero}><Image src="/figma/hero-v2.webp" fill priority sizes="124vw" alt="甘普尔黑白肖像拼贴" /><span className="hero-crosshair" aria-hidden="true"/></div>
         <div className="hero-lines" aria-hidden="true"><i/><i/><i/><i/><i/></div>
         <h1 className="cover-design"><StrokeText text="DESIGN" strokeColor="#A78BFA" fillColor="#000000" strokeWidth={1.4} drawDuration={1.6} fillDelay={0.2} stagger={0.05} fontSize={140} letterSpacing={-7} viewWidth={700} viewHeight={210}/></h1>
         <div className="cover-caption"><span>個</span><small>（INDIVIDUAL /<br/>-PORTFOLIO）</small><span>人</span><b>設計</b><b>作品集</b></div>
@@ -504,7 +498,7 @@ export default function Home() {
 
     <section className="figma-about about-redesign" id="about">
       <h2 className={`hello-title hello-${helloPhase}`} aria-label={helloText}>{Array.from(helloText).map((letter,index)=><span className="hello-char" aria-hidden="true" key={`${letter}-${index}`} style={{'--hello-in-delay':`${index*68}ms`,'--hello-out-delay':`${(helloText.length-1-index)*68}ms`} as CSSProperties}>{letter===' '? '\u00A0':letter}</span>)}</h2>
-      <div className="about-collage"><Image src="/figma/about-redesign/about-main.png" fill sizes="(max-width: 760px) 88vw, 42vw" alt="Puregan 的 About Me 拼贴肖像" priority={false}/></div>
+      <div className="about-collage"><Image src="/figma/about-redesign/about-main.webp" fill sizes="(max-width: 760px) 88vw, 42vw" alt="Puregan 的 About Me 拼贴肖像" priority={false}/></div>
       <Image className="about-emoji about-thought" src="/figma/about-redesign/thought-balloon.png" width={181} height={181} alt="思考气泡"/>
       <Image className="about-emoji about-crystal" src="/figma/about-redesign/crystal-ball.png" width={161} height={161} alt="水晶球"/>
       <Image className="about-emoji about-cat" src="/figma/about-redesign/black-cat.png" width={104} height={104} alt="黑猫"/>
@@ -518,7 +512,7 @@ export default function Home() {
     {aboutDetailsOpen&&<div className="about-details" ref={aboutDetailsRef} role="dialog" aria-modal="true" aria-label="Puregan 个人经历详情">
       <button className="about-details-close" type="button" onClick={()=>setAboutDetailsOpen(false)} aria-label="关闭个人经历详情">CLOSE</button>
       <section className="about-details-hero">
-        <Image src="/figma/about-redesign/readmore-hero.png" fill priority sizes="100vw" alt="Puregan 个人肖像"/>
+        <Image src="/figma/about-redesign/readmore-hero.webp" fill priority sizes="100vw" alt="Puregan 个人肖像"/>
         <div className="about-details-gradient" aria-hidden="true"/>
         <div className="about-details-title"><h2>Puregan</h2><div><b>Visual &amp; User Experience Designer</b><span>2026</span></div></div>
         <time>（2001.12.01）</time>
@@ -566,21 +560,18 @@ export default function Home() {
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
       {isVerticalCase?<>
-        <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef} onScroll={syncVerticalChapter}>
+        <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef}>
           <main className="tusi-case-stack">
-            {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" data-chapter-index={media.chapter} key={media.src}>
-              <Image src={media.src} width={media.width} height={media.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={90} alt={media.alt}/>
-            </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} data-chapter-index={media.chapter} key={media.src}>
-              <video src={media.src} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.label}/>
+            {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" key={media.src}>
+              <Image src={media.src} width={media.width} height={media.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={88} alt={media.alt}/>
+            </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} key={media.src}>
+              <LazyLoopVideo src={media.src} label={media.label}/>
             </figure>):<>
-              {activeWork.slides.map((slide,index)=>{const dimensions=verticalSlideDimensions[slide]??{width:1600,height:900};const chapter=verticalChapterIndexBySlide[activeWork.index]?.[index]??index;return <figure className="tusi-case-media tusi-series-slide" data-chapter-index={chapter} key={slide}><Image src={slide} width={dimensions.width} height={dimensions.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={92} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>})}
+              {activeWork.slides.map((slide,index)=>{const dimensions=verticalSlideDimensions[slide]??{width:1600,height:900};return <figure className="tusi-case-media tusi-series-slide" key={slide}><Image src={slide} width={dimensions.width} height={dimensions.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={88} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>})}
             </>}
           </main>
         </div>
-        <aside className="vertical-case-rail detail-reveal">
-          <div className="vertical-case-meta"><strong>{activeWork.title}</strong><small>{String(activeVerticalChapter+1).padStart(2,'0')} / {String(verticalChapters.length).padStart(2,'0')}</small></div>
-          <nav aria-label={`${activeWork.title}章节导航`}>{verticalChapters.map((chapter,index)=><button className={activeVerticalChapter===index?'is-active':undefined} type="button" onClick={()=>goToVerticalChapter(index)} aria-label={chapter} title={chapter} key={chapter}><i/><span>{chapter}</span></button>)}</nav>
-        </aside>
+        <aside className="vertical-case-signature detail-reveal" aria-label={`当前项目：${activeWork.title}`}><span>{activeWork.title}</span></aside>
       </>:<>
         <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
         <div className="detail-track detail-reveal" ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
