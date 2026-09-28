@@ -11,6 +11,7 @@ const workSlides = {
   grape:numberedSlides('grape',16),
   douyin:numberedSlides('douyin',19),
   huxi:numberedSlides('huxi',10),
+  aiSkill:Array.from({length:11},(_,index)=>`/projects/ai-skill/${String(index+1).padStart(2,'0')}.jpg`),
   peach:['/projects/case-studies/other/peach-power-family.webp'],
   beauty:['/projects/case-studies/other/path-of-beauty.webp'],
   poster:['/projects/case-studies/other/poster-design.webp'],
@@ -55,14 +56,13 @@ const projects = [
 ];
 
 const otherWorks = [
-  { index:'09', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2024', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
-  { index:'10', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2023', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
-  { index:'11', english:'Poster Design', title:'海报设计作品', image:workSlides.poster[0], slides:workSlides.poster, type:'VISUAL EXPLORATION', year:'2021—2025', description:'以字体、图形与构成为核心的系列视觉实验。', color:'#202020', ink:'#FFFFFF' },
+  { index:'08', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2024', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
+  { index:'09', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2023', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
+  { index:'10', english:'Poster Design', title:'海报设计作品', image:workSlides.poster[0], slides:workSlides.poster, type:'VISUAL EXPLORATION', year:'2021—2025', description:'以字体、图形与构成为核心的系列视觉实验。', color:'#202020', ink:'#FFFFFF' },
 ];
 
 const extendedWorks = [
-  { index:'07', title:'Marvis「扬华寻迹」Skill', english:'「Yanghua Quest」 Skill', type:'AI SKILL · PROTOTYPING', description:'将校园文化探索转化为可调用的 AI Skill 体验。', image:'/projects/demo/marvis-skill.jpg', slides:['/projects/demo/marvis-skill.jpg'], year:'2026', color:'#E6C742', ink:'#17130A' },
-  { index:'08', title:'吐司「灵感封面」Skill', english:'「Inspiration Cover」 Skill', type:'AI SKILL · DESIGN WORKFLOW', description:'以可复用的 AI 工作流辅助灵感封面的生成与设计表达。', image:'/projects/demo/ai-workflow.jpg', slides:['/projects/demo/ai-workflow.jpg'], year:'2026', color:'#7C3AED', ink:'#FFFFFF' },
+  { index:'07', title:'AI Skill 设计探索', english:'AI Skill Design Exploration', type:'AI PRODUCT · SKILL DESIGN · WORKFLOW', description:'以「扬华寻迹」与「吐司灵感封面」为双场景，探索如何将复杂信息与专业判断转化为稳定、可调用的 AI Skill。', image:'/projects/ai-skill/cover.jpg', slides:workSlides.aiSkill, year:'2026', color:'#250A05', ink:'#FFFFFF' },
 ];
 
 const detailWorks = [...projects,...extendedWorks,...otherWorks];
