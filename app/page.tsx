@@ -23,7 +23,7 @@ const tusiCaseMedia = [
   { kind:'video', src:'/projects/case-studies/tusi/tusi-group.mp4', label:'吐司 IP 角色合照动态展示' },
   { kind:'image', src:'/projects/case-studies/tusi/03.webp', width:2880, height:1482, alt:'吐司官网设计项目进程' },
   { kind:'image', src:'/projects/case-studies/tusi/04.webp', width:2880, height:8067, alt:'吐司官网 PC 端与移动端界面设计' },
-  { kind:'image', src:'/projects/case-studies/tusi/05.webp', width:2880, height:6886, alt:'吐司官网动效版本设计' },
+  { kind:'image', src:'/projects/case-studies/tusi/05.webp', width:1920, height:4591, alt:'吐司官网动效版本设计' },
   { kind:'video', src:'/projects/case-studies/tusi/tusi-motion.mp4', label:'吐司官网动效版本完整演示' },
 ] as const;
 
@@ -41,7 +41,7 @@ const verticalSlideDimensions:Record<string,{width:number;height:number}> = {
   '/projects/tusi-interaction/06.webp':{width:2880,height:1620},
   '/projects/tusi-interaction/07.webp':{width:2880,height:1111},
   '/projects/tusi-interaction/08.webp':{width:2880,height:2457},
-  '/projects/tusi-interaction/09.webp':{width:2880,height:2473},
+  '/projects/tusi-interaction/09.webp':{width:1920,height:1649},
 };
 
 const verticalCaseIndexes = new Set(['01','02','03']);
@@ -67,6 +67,11 @@ const extendedWorks = [
 ];
 
 const detailWorks = [...projects,...extendedWorks,...otherWorks];
+const portfolioImageSources = Array.from(new Set([
+  '/figma/about-redesign/readmore-hero.webp',
+  ...detailWorks.map(work=>work.image),
+  ...detailWorks.flatMap(work=>work.slides),
+]));
 
 function LazyLoopVideo({src,label}:{src:string;label:string}) {
   const videoRef=useRef<HTMLVideoElement>(null);
@@ -104,23 +109,23 @@ function DeferredCaseImage({src,width,height,alt,eager=false}:{src:string;width:
     observer.observe(host);
     return ()=>observer.disconnect();
   },[eager,shouldLoad]);
-  return <span className="deferred-case-image" ref={hostRef}>{shouldLoad&&<Image src={src} width={width} height={height} sizes="(max-width: 1920px) 100vw, 1920px" priority={eager} quality={88} alt={alt}/>}</span>;
+  return <span className="deferred-case-image" ref={hostRef}>{shouldLoad&&<Image src={src} width={width} height={height} sizes="(max-width: 1920px) 100vw, 1920px" priority={eager} unoptimized alt={alt}/>}</span>;
 }
 
-function DeferredSlideImage({src,alt,eager=false}:{src:string;alt:string;eager?:boolean}) {
+function DeferredSlideImage({src,alt,eager=false,enabled=true,onLoad}:{src:string;alt:string;eager?:boolean;enabled?:boolean;onLoad?:()=>void}) {
   const hostRef=useRef<HTMLSpanElement>(null);
-  const [shouldLoad,setShouldLoad]=useState(eager);
+  const [shouldLoad,setShouldLoad]=useState(eager&&enabled);
   useEffect(()=>{
-    if(eager||shouldLoad)return;
+    if(!enabled||eager||shouldLoad)return;
     const host=hostRef.current;
     if(!host)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries[0]?.isIntersecting){setShouldLoad(true);observer.disconnect()}
-    },{rootMargin:'0px 900px',threshold:.01});
+    },{rootMargin:'0px 120px',threshold:.01});
     observer.observe(host);
     return ()=>observer.disconnect();
-  },[eager,shouldLoad]);
-  return <span className="deferred-slide-image" ref={hostRef}>{shouldLoad&&<Image src={src} fill sizes="82vw" priority={eager} style={{objectFit:'contain'}} alt={alt}/>}</span>;
+  },[eager,enabled,shouldLoad]);
+  return <span className="deferred-slide-image" ref={hostRef}>{shouldLoad&&<Image src={src} fill sizes="82vw" priority={eager} fetchPriority={eager?'high':'auto'} onLoad={onLoad} unoptimized style={{objectFit:'contain'}} alt={alt}/>}</span>;
 }
 
 export default function Home() {
@@ -137,7 +142,7 @@ export default function Home() {
   const aboutDetailsRef = useRef<HTMLDivElement>(null);
   const workMenuRef = useRef<HTMLDivElement>(null);
   const showcaseRef = useRef<HTMLElement>(null);
-  const [showcaseIndex, setShowcaseIndex] = useState(0);
+  const [detailFirstReady,setDetailFirstReady] = useState(false);
   const [workTheme, setWorkTheme] = useState(false);
   const [workEnding, setWorkEnding] = useState(false);
   const [hoveredWorkIndex, setHoveredWorkIndex] = useState<string | null>(null);
@@ -158,6 +163,9 @@ export default function Home() {
   const openWork = (index:string,event?:ReactMouseEvent<HTMLButtonElement>)=>{
     const nextIndex=detailWorks.findIndex(work=>work.index===index);
     if(nextIndex<0)return;
+    setDetailFirstReady(false);
+    const firstSlide=detailWorks[nextIndex].slides[0];
+    if(firstSlide){const image=new window.Image();image.fetchPriority='high';image.src=firstSlide}
     const card=event?.currentTarget??document.querySelector<HTMLElement>(`.project-card-stack[data-work-index="${index}"]`);
     if(card)captureCardOrigin(card);
     setDetailMotion('opening');
@@ -172,14 +180,46 @@ export default function Home() {
       setDetailMotion('opening');
     },720);
   };
-  const showAdjacentWork = (direction:number)=>setActiveWorkIndex(current=>{
-    if(current===null)return null;
-    const next=(current+direction+detailWorks.length)%detailWorks.length;
-    const nextWork=detailWorks[next];
-    const card=document.querySelector<HTMLElement>(`.project-card-stack[data-work-index="${nextWork.index}"]`);
-    if(card)captureCardOrigin(card);
-    return next;
-  });
+  const showAdjacentWork = (direction:number)=>{
+    setDetailFirstReady(false);
+    setActiveWorkIndex(current=>{
+      if(current===null)return null;
+      const next=(current+direction+detailWorks.length)%detailWorks.length;
+      const nextWork=detailWorks[next];
+      const card=document.querySelector<HTMLElement>(`.project-card-stack[data-work-index="${nextWork.index}"]`);
+      if(card)captureCardOrigin(card);
+      const firstSlide=nextWork.slides[0];
+      if(firstSlide){const image=new window.Image();image.fetchPriority='high';image.src=firstSlide}
+      return next;
+    });
+  };
+
+  useEffect(()=>{
+    let cancelled=false;
+    let startTimer=0;
+    const preload=(src:string,priority:'high'|'low'='low')=>new Promise<void>(resolve=>{
+      const image=new window.Image();
+      image.decoding='async';
+      image.fetchPriority=priority;
+      image.onload=image.onerror=()=>resolve();
+      image.src=src;
+    });
+    const criticalSources=['/figma/about-redesign/readmore-hero.webp',...detailWorks.map(work=>work.image)];
+    criticalSources.forEach(src=>void preload(src,'high'));
+    const backgroundSources=portfolioImageSources.filter(src=>!criticalSources.includes(src));
+    let cursor=0;
+    const worker=async()=>{
+      while(!cancelled&&cursor<backgroundSources.length){
+        const src=backgroundSources[cursor++];
+        await preload(src);
+        await new Promise<void>(resolve=>window.setTimeout(resolve,80));
+      }
+    };
+    const begin=()=>{startTimer=window.setTimeout(()=>{void Promise.all([worker(),worker(),worker()])},500)};
+    if(document.readyState==='complete')begin();
+    else window.addEventListener('load',begin,{once:true});
+    return ()=>{cancelled=true;window.clearTimeout(startTimer);window.removeEventListener('load',begin)};
+  },[]);
   const syncHorizontalSlides=(track:HTMLDivElement)=>{
     const trackCenter=track.scrollLeft+track.clientWidth/2;
     const range=Math.max(track.clientWidth*.68,1);
@@ -285,9 +325,6 @@ export default function Home() {
         card.style.pointerEvents=visible>.35?'auto':'none';
         card.style.zIndex=String(20+index);
       });
-      const raw=(timeline-introDuration)/cardGap;
-      const next=Math.max(0,Math.min(cards.length-1,Math.round(raw)));
-      setShowcaseIndex(current=>current===next?current:next);
       if(stage){
         const outro=smooth(lastCardEnd-.12,lastCardEnd+.36,timeline);
         const capabilities=smooth(lastCardEnd-.18,lastCardEnd+.58,timeline);
@@ -546,7 +583,7 @@ export default function Home() {
     {aboutDetailsOpen&&<div className="about-details" ref={aboutDetailsRef} role="dialog" aria-modal="true" aria-label="Puregan 个人经历详情">
       <button className="about-details-close" type="button" onClick={()=>setAboutDetailsOpen(false)} aria-label="关闭个人经历详情">CLOSE</button>
       <section className="about-details-hero">
-        <Image src="/figma/about-redesign/readmore-hero.webp" fill priority sizes="100vw" alt="Puregan 个人肖像"/>
+        <Image src="/figma/about-redesign/readmore-hero.webp" fill priority unoptimized sizes="100vw" alt="Puregan 个人肖像"/>
         <div className="about-details-gradient" aria-hidden="true"/>
         <div className="about-details-title"><h2>Puregan</h2><div><b>Visual &amp; User Experience Designer</b><span>2026</span></div></div>
         <time>（2001.12.01）</time>
@@ -575,10 +612,10 @@ export default function Home() {
       <div className="card-stage">
         <p className="work-manifesto">AESTHETICS = JUDGMENT + INTUITION</p>
         <div className="card-background" aria-hidden="true">PROJECTS</div>
-        <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=>{const shouldRenderCover=Math.abs(index-showcaseIndex)<=2;return <button className={`project-card-stack${activeWork?.index===p.index?' is-transition-source':''}`} data-work-index={p.index} type="button" onClick={event=>openWork(p.index,event)} key={p.index} aria-label={`查看${p.title}项目详情`}>
-          <figure>{shouldRenderCover&&<Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index===0} loading={index===0?undefined:'lazy'} quality={82} alt={`${p.title}项目封面`}/>}</figure>
+        <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=><button className={`project-card-stack${activeWork?.index===p.index?' is-transition-source':''}`} data-work-index={p.index} type="button" onClick={event=>openWork(p.index,event)} key={p.index} aria-label={`查看${p.title}项目详情`}>
+          <figure><Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index<3} loading={index<3?undefined:'lazy'} unoptimized alt={`${p.title}项目封面`}/></figure>
           <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3 className={p.english.startsWith('「')?'bracket-leading':undefined}>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
-        </button>})}</div>
+        </button>)}</div>
         <p className="work-selected">SELECTED WORKS<br/>2023—2026</p>
         <div className="work-capabilities" aria-label="设计能力">
           <p>DESIGN PRACTICE / 2026</p>
@@ -590,7 +627,7 @@ export default function Home() {
     {activeWork&&<div className={`project-detail detail-motion-${detailMotion}${isVerticalCase?' is-vertical-case':''}`} role="dialog" aria-modal="true" aria-label={`${activeWork.title}项目详情`} style={{'--case-bg':activeWork.color,'--case-ink':activeWork.ink,'--origin-left':`${detailOrigin.left}px`,'--origin-top':`${detailOrigin.top}px`,'--origin-width':`${detailOrigin.width}px`,'--origin-height':`${detailOrigin.height}px`,'--origin-radius':`${detailOrigin.radius}px`} as CSSProperties}>
       <div className="detail-backdrop" aria-hidden="true"/>
       <div className="detail-card-morph" aria-hidden="true">
-        <figure><Image src={activeWork.image} fill sizes="40vw" priority alt=""/></figure>
+        <figure><Image src={activeWork.image} fill sizes="40vw" priority unoptimized alt=""/></figure>
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
       {isVerticalCase?<>
@@ -609,7 +646,7 @@ export default function Home() {
       </>:<>
         <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
         <div className={`detail-track detail-reveal${isCenteredSingle?' is-centered-single':''}`} ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
-          {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><DeferredSlideImage src={slide} eager={index===0} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
+          {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><DeferredSlideImage src={slide} eager={index===0} enabled={index===0||detailFirstReady} onLoad={index===0?()=>setDetailFirstReady(true):undefined} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
         </div>
         <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h2>{activeWork.english}</h2><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
         <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
