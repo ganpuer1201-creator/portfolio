@@ -45,6 +45,7 @@ const verticalSlideDimensions:Record<string,{width:number;height:number}> = {
 };
 
 const verticalCaseIndexes = new Set(['01','02','03']);
+const centeredSingleWorkIndexes = new Set(['08','09']);
 
 const projects = [
   { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tusi-website-cover.webp', slides:tusiCaseMedia.filter(item=>item.kind==='image').map(item=>item.src), year:'2026', color:'#F1EEE8', ink:'#111111' },
@@ -56,7 +57,7 @@ const projects = [
 ];
 
 const otherWorks = [
-  { index:'08', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2024', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
+  { index:'08', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2026', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
   { index:'09', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2023', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
   { index:'10', english:'Poster Design', title:'海报设计作品', image:workSlides.poster[0], slides:workSlides.poster, type:'VISUAL EXPLORATION', year:'2021—2025', description:'以字体、图形与构成为核心的系列视觉实验。', color:'#202020', ink:'#FFFFFF' },
 ];
@@ -90,6 +91,38 @@ function LazyLoopVideo({src,label}:{src:string;label:string}) {
   return <video ref={videoRef} muted loop playsInline controls preload="none" aria-label={label}/>;
 }
 
+function DeferredCaseImage({src,width,height,alt,eager=false}:{src:string;width:number;height:number;alt:string;eager?:boolean}) {
+  const hostRef=useRef<HTMLSpanElement>(null);
+  const [shouldLoad,setShouldLoad]=useState(eager);
+  useEffect(()=>{
+    if(eager||shouldLoad)return;
+    const host=hostRef.current;
+    if(!host)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries[0]?.isIntersecting){setShouldLoad(true);observer.disconnect()}
+    },{rootMargin:'900px 0px',threshold:.01});
+    observer.observe(host);
+    return ()=>observer.disconnect();
+  },[eager,shouldLoad]);
+  return <span className="deferred-case-image" ref={hostRef}>{shouldLoad&&<Image src={src} width={width} height={height} sizes="(max-width: 1920px) 100vw, 1920px" priority={eager} quality={88} alt={alt}/>}</span>;
+}
+
+function DeferredSlideImage({src,alt,eager=false}:{src:string;alt:string;eager?:boolean}) {
+  const hostRef=useRef<HTMLSpanElement>(null);
+  const [shouldLoad,setShouldLoad]=useState(eager);
+  useEffect(()=>{
+    if(eager||shouldLoad)return;
+    const host=hostRef.current;
+    if(!host)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries[0]?.isIntersecting){setShouldLoad(true);observer.disconnect()}
+    },{rootMargin:'0px 900px',threshold:.01});
+    observer.observe(host);
+    return ()=>observer.disconnect();
+  },[eager,shouldLoad]);
+  return <span className="deferred-slide-image" ref={hostRef}>{shouldLoad&&<Image src={src} fill sizes="82vw" priority={eager} style={{objectFit:'contain'}} alt={alt}/>}</span>;
+}
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeWorkIndex, setActiveWorkIndex] = useState<number | null>(null);
@@ -116,6 +149,7 @@ export default function Home() {
   const detailMotionTimerRef = useRef<number | null>(null);
   const activeWork = activeWorkIndex===null?null:detailWorks[activeWorkIndex];
   const isVerticalCase=Boolean(activeWork&&verticalCaseIndexes.has(activeWork.index));
+  const isCenteredSingle=Boolean(activeWork&&centeredSingleWorkIndexes.has(activeWork.index));
   const captureCardOrigin = (card:HTMLElement)=>{
     const rect=card.getBoundingClientRect();
     const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
@@ -541,10 +575,10 @@ export default function Home() {
       <div className="card-stage">
         <p className="work-manifesto">AESTHETICS = JUDGMENT + INTUITION</p>
         <div className="card-background" aria-hidden="true">PROJECTS</div>
-        <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=><button className={`project-card-stack${activeWork?.index===p.index?' is-transition-source':''}`} data-work-index={p.index} type="button" onClick={event=>openWork(p.index,event)} key={p.index} aria-label={`查看${p.title}项目详情`}>
-          <figure><Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index<2} alt={`${p.title}项目封面`}/></figure>
+        <div className="project-card-deck" aria-label="全部作品目录">{detailWorks.map((p,index)=>{const shouldRenderCover=Math.abs(index-showcaseIndex)<=2;return <button className={`project-card-stack${activeWork?.index===p.index?' is-transition-source':''}`} data-work-index={p.index} type="button" onClick={event=>openWork(p.index,event)} key={p.index} aria-label={`查看${p.title}项目详情`}>
+          <figure>{shouldRenderCover&&<Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index===0} loading={index===0?undefined:'lazy'} quality={82} alt={`${p.title}项目封面`}/>}</figure>
           <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3 className={p.english.startsWith('「')?'bracket-leading':undefined}>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
-        </button>)}</div>
+        </button>})}</div>
         <p className="work-selected">SELECTED WORKS<br/>2023—2026</p>
         <div className="work-capabilities" aria-label="设计能力">
           <p>DESIGN PRACTICE / 2026</p>
@@ -562,20 +596,20 @@ export default function Home() {
       {isVerticalCase?<>
         <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef}>
           <main className="tusi-case-stack">
-            {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" key={media.src}>
-              <Image src={media.src} width={media.width} height={media.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={88} alt={media.alt}/>
+            {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" style={{aspectRatio:`${media.width}/${media.height}`}} key={media.src}>
+              <DeferredCaseImage src={media.src} width={media.width} height={media.height} eager={index===0} alt={media.alt}/>
             </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} key={media.src}>
               <LazyLoopVideo src={media.src} label={media.label}/>
             </figure>):<>
-              {activeWork.slides.map((slide,index)=>{const dimensions=verticalSlideDimensions[slide]??{width:1600,height:900};return <figure className="tusi-case-media tusi-series-slide" key={slide}><Image src={slide} width={dimensions.width} height={dimensions.height} sizes="(max-width: 1920px) 100vw, 1920px" priority={index===0} loading={index===0?undefined:'lazy'} quality={88} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>})}
+              {activeWork.slides.map((slide,index)=>{const dimensions=verticalSlideDimensions[slide]??{width:1600,height:900};return <figure className="tusi-case-media tusi-series-slide" style={{aspectRatio:`${dimensions.width}/${dimensions.height}`}} key={slide}><DeferredCaseImage src={slide} width={dimensions.width} height={dimensions.height} eager={index===0} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>})}
             </>}
           </main>
         </div>
         <aside className="vertical-case-signature detail-reveal" aria-label={`当前项目：${activeWork.title}`}><span>{activeWork.title}</span></aside>
       </>:<>
         <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
-        <div className="detail-track detail-reveal" ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
-          {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><Image src={slide} fill sizes="82vw" priority={index===0} loading={index===0?undefined:'lazy'} style={{objectFit:'contain'}} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
+        <div className={`detail-track detail-reveal${isCenteredSingle?' is-centered-single':''}`} ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
+          {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><DeferredSlideImage src={slide} eager={index===0} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
         </div>
         <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h2>{activeWork.english}</h2><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
         <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
