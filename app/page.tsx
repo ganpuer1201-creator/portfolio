@@ -14,8 +14,41 @@ const workSlides = {
   aiSkill:Array.from({length:11},(_,index)=>`/projects/ai-skill/${String(index+1).padStart(2,'0')}.jpg`),
   peach:['/projects/case-studies/other/peach-power-family.webp'],
   beauty:['/projects/case-studies/other/path-of-beauty.webp'],
-  poster:['/projects/case-studies/other/poster-design.webp'],
+  poster:['/projects/poster-motion/images/cover.webp'],
 };
+
+type PosterChapter = {
+  id:string;
+  title:string;
+  english:string;
+  category:string;
+  year:string;
+  description:string;
+  award?:string;
+  media:readonly ({kind:'image';src:string;alt:string}|{kind:'video';src:string;poster:string;alt:string})[];
+};
+
+const posterChapters:readonly PosterChapter[] = [
+  {id:'qingyuan',title:'遇见青原',english:'Meet in Qingyuan',category:'城市文化海报',year:'SELECTED WORK',award:'NCDA 获奖作品',description:'以地域山水、历史地标与人文意象组织画面层次，构建青原文化的当代表达。',media:[{kind:'image',src:'/projects/poster-motion/images/qingyuan.webp',alt:'遇见青原文化海报'}]},
+  {id:'mucha',title:'桃坞新笺',english:'Alphonse Mucha × Taohuawu',category:'系列海报',year:'SERIES / 06',description:'将穆夏式装饰语言与桃花坞木版年画的花卉、器物和吉祥意象重新编排，形成六张连续而各自独立的系列画面。',media:[
+    {kind:'image',src:'/projects/poster-motion/images/mucha-01.webp',alt:'桃坞新笺花开富贵海报'},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-02.webp',alt:'桃坞新笺鲜桃枇杷满盆海报'},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-03.webp',alt:'桃坞新笺夏花篮筐海报'},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-04.webp',alt:'桃坞新笺牡丹双蝶海报'},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-05.webp',alt:'桃坞新笺蟠桃知了海报'},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-06.webp',alt:'桃坞新笺八面威风海报'},
+  ]},
+  {id:'bencao',title:'本草纲目',english:'Compendium of Materia Medica',category:'字体实验海报',year:'POSTER STUDY',description:'以古籍版式、印章与药材文本为线索，尝试传统文献在现代海报中的信息重组。',media:[{kind:'image',src:'/projects/poster-motion/images/bencao.webp',alt:'本草纲目主题海报'}]},
+  {id:'yongle',title:'永乐官窑瓷器展',english:'Yongle Imperial Porcelain',category:'展览海报',year:'POSTER STUDY',description:'以克制留白与器物局部建立观看焦点，呈现瓷器展览的安静质感。',media:[{kind:'image',src:'/projects/poster-motion/images/yongle.webp',alt:'永乐官窑瓷器展览海报'}]},
+  {id:'sanxingdui',title:'三星伴月',english:'Sanxingdui',category:'文化主题海报',year:'POSTER STUDY',description:'通过文物特写、暗色肌理与纵向文字秩序，强化古蜀文明的神秘感与历史厚度。',media:[{kind:'image',src:'/projects/poster-motion/images/sanxingdui.webp',alt:'三星伴月三星堆主题海报'}]},
+  {id:'dayi',title:'北京大羿 2021 秋季',english:'Beijing Dayi Autumn 2021',category:'拍卖系列海报',year:'2021',description:'以器物轮廓、东方色彩与留白构成两张同源视觉，为不同专场建立统一识别。',media:[
+    {kind:'image',src:'/projects/poster-motion/images/dayi-01.webp',alt:'北京大羿玉堂传器海报'},
+    {kind:'image',src:'/projects/poster-motion/images/dayi-02.webp',alt:'北京大羿文人空间海报'},
+  ]},
+  {id:'konghua',title:'空花阳焰',english:'Kūka Yōen',category:'动态海报练习',year:'MOTION STUDY',description:'以连续的节奏、形态变化与视觉残像探索静态构图在时间维度中的延展。',media:[{kind:'video',src:'/projects/poster-motion/videos/konghua.mp4',poster:'/projects/poster-motion/videos/konghua-poster.jpg',alt:'空花阳焰动态海报'}]},
+  {id:'zhiying',title:'织影流转',english:'Woven Shadows in Motion',category:'动态海报系列',year:'MOTION SERIES',description:'通过图形、光影与节奏的连续变化，将系列视觉转化为一段完整的动态观看体验。',media:[{kind:'video',src:'/projects/poster-motion/videos/zhiying.mp4',poster:'/projects/poster-motion/videos/zhiying-poster.jpg',alt:'织影流转系列动态海报'}]},
+  {id:'yongdian',title:'俑乐大典',english:'Music of the Figurines',category:'博物馆动态海报',year:'MOTION STUDY',description:'围绕成都博物馆展览主题，以动态编排连接文物形象、标题信息与展览氛围。',media:[{kind:'video',src:'/projects/poster-motion/videos/yongdian.mp4',poster:'/projects/poster-motion/videos/yongdian-poster.jpg',alt:'成都博物馆俑乐大典动态海报'}]},
+];
 
 const tusiCaseMedia = [
   { kind:'image', src:'/projects/case-studies/tusi/01.webp', width:2880, height:2742, alt:'吐司官网设计项目封面与项目概览' },
@@ -59,7 +92,7 @@ const projects = [
 const otherWorks = [
   { index:'08', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2026', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
   { index:'09', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2023', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
-  { index:'10', english:'Poster Design', title:'海报设计作品', image:workSlides.poster[0], slides:workSlides.poster, type:'VISUAL EXPLORATION', year:'2021—2025', description:'以字体、图形与构成为核心的系列视觉实验。', color:'#202020', ink:'#FFFFFF' },
+  { index:'10', english:'Poster & Motion Archive', title:'海报与动态视觉设计', image:workSlides.poster[0], slides:workSlides.poster, type:'POSTER · MOTION DESIGN', year:'2021—2025', description:'以独立项目为单元，收录静态海报、系列视觉与动态海报练习。', color:'#15120E', ink:'#FFFFFF' },
 ];
 
 const extendedWorks = [
@@ -94,6 +127,31 @@ function LazyLoopVideo({src,label}:{src:string;label:string}) {
     return ()=>observer.disconnect();
   },[src]);
   return <video ref={videoRef} muted loop playsInline controls preload="none" aria-label={label}/>;
+}
+
+function PosterMotionGallery({onClose}:{onClose:()=>void}) {
+  const [chapterIndex,setChapterIndex]=useState(0);
+  const chapter=posterChapters[chapterIndex];
+  const move=(direction:number)=>setChapterIndex(current=>(current+direction+posterChapters.length)%posterChapters.length);
+  return <section className="poster-exhibition detail-reveal" aria-label="海报与动态视觉设计画廊">
+    <header className="poster-exhibition-head"><span>PUREGAN / VISUAL ARCHIVE</span><strong>POSTER &amp; MOTION</strong><span>{String(chapterIndex+1).padStart(2,'0')} / {String(posterChapters.length).padStart(2,'0')}</span></header>
+    <nav className="poster-exhibition-index" aria-label="项目章节">
+      {posterChapters.map((item,index)=><button className={index===chapterIndex?'is-active':''} type="button" onClick={()=>setChapterIndex(index)} key={item.id}><span>{String(index+1).padStart(2,'0')}</span><b>{item.title}</b></button>)}
+    </nav>
+    <div className={`poster-exhibition-stage media-count-${chapter.media.length}`} key={chapter.id}>
+      <div className="poster-exhibition-media">
+        {chapter.media.map(media=>media.kind==='image'?<figure key={media.src}><Image src={media.src} fill unoptimized sizes={chapter.media.length>2?'24vw':'64vw'} alt={media.alt}/></figure>:<figure className="is-video" key={media.src}><video src={media.src} poster={media.poster} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.alt}/></figure>)}
+      </div>
+      <aside className="poster-exhibition-copy">
+        <div><span>{chapter.category}</span><span>{chapter.year}</span></div>
+        <h1>{chapter.english}</h1><h2>{chapter.title}</h2>
+        <p>{chapter.description}</p>
+        {chapter.award&&<strong>{chapter.award}</strong>}
+      </aside>
+    </div>
+    <div className="poster-exhibition-controls"><button type="button" onClick={()=>move(-1)}>← PREV</button><div>{posterChapters.map((item,index)=><i className={index===chapterIndex?'is-active':''} key={item.id}/>)}</div><button type="button" onClick={()=>move(1)}>NEXT →</button></div>
+    <button className="poster-exhibition-close" type="button" onClick={onClose} aria-label="关闭海报与动态视觉设计画廊">×</button>
+  </section>;
 }
 
 function DeferredCaseImage({src,width,height,alt,eager=false}:{src:string;width:number;height:number;alt:string;eager?:boolean}) {
@@ -155,6 +213,7 @@ export default function Home() {
   const activeWork = activeWorkIndex===null?null:detailWorks[activeWorkIndex];
   const isVerticalCase=Boolean(activeWork&&verticalCaseIndexes.has(activeWork.index));
   const isCenteredSingle=Boolean(activeWork&&centeredSingleWorkIndexes.has(activeWork.index));
+  const isPosterExhibition=activeWork?.index==='10';
   const captureCardOrigin = (card:HTMLElement)=>{
     const rect=card.getBoundingClientRect();
     const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
@@ -630,7 +689,7 @@ export default function Home() {
         <figure><Image src={activeWork.image} fill sizes="40vw" priority unoptimized alt=""/></figure>
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
-      {isVerticalCase?<>
+      {isPosterExhibition?<PosterMotionGallery onClose={closeWork}/>:isVerticalCase?<>
         <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef}>
           <main className="tusi-case-stack">
             {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" style={{aspectRatio:`${media.width}/${media.height}`}} key={media.src}>
@@ -651,7 +710,7 @@ export default function Home() {
         <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h2>{activeWork.english}</h2><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
         <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
       </>}
-      <button className="detail-unified-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
+      {!isPosterExhibition&&<button className="detail-unified-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>}
     </div>}
     <footer className="contact-screen" id="contact">
       <SideRays className="contact-rays" rayColor1="#A855F7" rayColor2="#94A3B8" speed={1.35} intensity={2.75} spread={2.45} origin="top-right" tilt={-9} saturation={1.5} blend={0.58} falloff={1.32} opacity={1}/>
