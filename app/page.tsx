@@ -14,7 +14,7 @@ const workSlides = {
   aiSkill:Array.from({length:11},(_,index)=>`/projects/ai-skill/${String(index+1).padStart(2,'0')}.jpg`),
   peach:['/projects/case-studies/other/peach-power-family.webp'],
   beauty:['/projects/case-studies/other/path-of-beauty.webp'],
-  poster:['/projects/poster-motion/images/cover.webp'],
+  poster:['/projects/poster-motion/images/cover.jpg'],
 };
 
 type PosterChapter = {
@@ -78,7 +78,7 @@ const verticalSlideDimensions:Record<string,{width:number;height:number}> = {
 };
 
 const verticalCaseIndexes = new Set(['01','02','03']);
-const centeredSingleWorkIndexes = new Set(['08','09']);
+const centeredSingleWorkIndexes = new Set(['09','10']);
 
 const projects = [
   { index:'01', title:'吐司官网设计', english:'Tusi Website', type:'WEB DESIGN · BRAND EXPERIENCE', description:'为吐司构建面向创作者与浏览用户的品牌官网体验，在清晰传达产品价值的同时建立鲜明的视觉记忆。', image:'/projects/tusi-website-cover.webp', slides:tusiCaseMedia.filter(item=>item.kind==='image').map(item=>item.src), year:'2026', color:'#F1EEE8', ink:'#111111' },
@@ -90,9 +90,9 @@ const projects = [
 ];
 
 const otherWorks = [
-  { index:'08', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2026', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
-  { index:'09', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2023', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
-  { index:'10', english:'Poster & Motion Archive', title:'海报与动态视觉设计', image:workSlides.poster[0], slides:workSlides.poster, type:'POSTER · MOTION DESIGN', year:'2021—2025', description:'以独立项目为单元，收录静态海报、系列视觉与动态海报练习。', color:'#15120E', ink:'#FFFFFF' },
+  { index:'08', english:'Poster & Motion Archive', title:'海报与动态视觉设计', image:workSlides.poster[0], slides:workSlides.poster, type:'POSTER · MOTION DESIGN', year:'2021—2025', description:'以独立项目为单元，收录静态海报、系列视觉与动态海报练习。', color:'#15120E', ink:'#FFFFFF' },
+  { index:'09', english:'Peach Power Family', title:'桃气能量团IP形象设计', image:workSlides.peach[0], slides:workSlides.peach, type:'IP DESIGN', year:'2026', description:'以年轻、轻松的角色语言构建桃气能量团的 IP 视觉形象与延展应用。', color:'#FF91AD', ink:'#2B1020' },
+  { index:'10', english:'The Path of Beauty', title:'《美的历程》书籍装帧设计', image:workSlides.beauty[0], slides:workSlides.beauty, type:'EDITORIAL DESIGN', year:'2023', description:'围绕《美的历程》的文化脉络进行书籍视觉与阅读节奏设计。', color:'#7B211E', ink:'#FFFFFF' },
 ];
 
 const extendedWorks = [
@@ -132,7 +132,7 @@ function PosterMotionGallery({onClose}:{onClose:()=>void}) {
   const [chapterIndex,setChapterIndex]=useState(0);
   const chapter=posterChapters[chapterIndex];
   return <section className="poster-exhibition detail-reveal" aria-label="海报与动态视觉设计画廊">
-    <header className="poster-exhibition-head">
+    <header className="detail-gallery-nav poster-exhibition-head">
       <span className="detail-gallery-brand">PUREGAN</span>
       <div className="detail-gallery-heading"><strong>POSTER &amp; MOTION ARCHIVE</strong><small>点击左侧作品名称以浏览</small></div>
       <span aria-hidden="true"/>
@@ -217,7 +217,7 @@ export default function Home() {
   const activeWork = activeWorkIndex===null?null:detailWorks[activeWorkIndex];
   const isVerticalCase=Boolean(activeWork&&verticalCaseIndexes.has(activeWork.index));
   const isCenteredSingle=Boolean(activeWork&&centeredSingleWorkIndexes.has(activeWork.index));
-  const isPosterExhibition=activeWork?.index==='10';
+  const isPosterExhibition=activeWork?.index==='08';
   const captureCardOrigin = (card:HTMLElement)=>{
     const rect=card.getBoundingClientRect();
     const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
