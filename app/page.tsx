@@ -25,29 +25,29 @@ type PosterChapter = {
   year:string;
   description:string;
   award?:string;
-  media:readonly ({kind:'image';src:string;alt:string}|{kind:'video';src:string;poster:string;alt:string})[];
+  media:readonly ({kind:'image';src:string;alt:string;width?:number;height?:number}|{kind:'video';src:string;poster:string;alt:string;width?:number;height?:number})[];
 };
 
 const posterChapters:readonly PosterChapter[] = [
-  {id:'qingyuan',title:'遇见青原',english:'Meet in Qingyuan',category:'城市文化海报',year:'SELECTED WORK',award:'NCDA 获奖作品',description:'以地域山水、历史地标与人文意象组织画面层次，构建青原文化的当代表达。',media:[{kind:'image',src:'/projects/poster-motion/images/qingyuan.webp',alt:'遇见青原文化海报'}]},
-  {id:'mucha',title:'桃坞新笺',english:'Alphonse Mucha × Taohuawu',category:'系列海报',year:'SERIES / 06',description:'将穆夏式装饰语言与桃花坞木版年画的花卉、器物和吉祥意象重新编排，形成六张连续而各自独立的系列画面。',media:[
-    {kind:'image',src:'/projects/poster-motion/images/mucha-01.webp',alt:'桃坞新笺花开富贵海报'},
-    {kind:'image',src:'/projects/poster-motion/images/mucha-02.webp',alt:'桃坞新笺鲜桃枇杷满盆海报'},
-    {kind:'image',src:'/projects/poster-motion/images/mucha-03.webp',alt:'桃坞新笺夏花篮筐海报'},
-    {kind:'image',src:'/projects/poster-motion/images/mucha-04.webp',alt:'桃坞新笺牡丹双蝶海报'},
-    {kind:'image',src:'/projects/poster-motion/images/mucha-05.webp',alt:'桃坞新笺蟠桃知了海报'},
-    {kind:'image',src:'/projects/poster-motion/images/mucha-06.webp',alt:'桃坞新笺八面威风海报'},
+  {id:'zhiying',title:'织影流转',english:'Woven Shadows in Motion',category:'动态交互海报',year:'2025',description:'以土家族非遗西兰卡普织锦纹样为核心，运用 Touchdesigner、AE、AI 等工具重构四方连续图案，融合光影动态与音乐交互，支持粒子、万花筒特效实时切换，打造沉浸式视觉体验，借数字媒介推动非遗年轻化传承。',media:[{kind:'video',src:'/projects/poster-motion/videos/zhiying.mp4',poster:'/projects/poster-motion/videos/zhiying-poster.jpg',alt:'织影流转系列动态海报',width:1920,height:1080}]},
+  {id:'yongdian',title:'佣乐大典',english:'Music of the Figurines',category:'动态交互海报',year:'2025',description:'以成都博物馆成汉陶俑为核心，运用 vibe coding 的代码置入 Processing 软件制作交互动态海报，通过粒子解构、陶俑群像动画构建完整交互闭环，以沉浸式数字叙事趣味传递文物历史内涵。',media:[{kind:'video',src:'/projects/poster-motion/videos/yongdian.mp4',poster:'/projects/poster-motion/videos/yongdian-poster.jpg',alt:'成都博物馆佣乐大典动态海报',width:2304,height:1440}]},
+  {id:'konghua',title:'空花阳焰',english:'Kūka Yōen',category:'动态交互海报',year:'2025',description:'作品依托鼠标拖尾生成紫蓝色火焰交互效果，消散时伴随波纹节奏变化，让观者在互动过程中感受动态视觉韵律，呼应海报主题。',media:[{kind:'video',src:'/projects/poster-motion/videos/konghua.mp4',poster:'/projects/poster-motion/videos/konghua-poster.jpg',alt:'空花阳焰动态海报',width:960,height:1280}]},
+  {id:'qingyuan',title:'遇见青原',english:'Meet in Qingyuan',category:'城市文化海报',year:'2022',award:'第十届未来设计师·全国高校数字艺术设计大赛 全国优秀奖 / 江西省一等奖',description:'以江西省吉安市青原区地域山水、历史地标与人文意象组织画面层次，构建青原文化的当代表达。',media:[{kind:'image',src:'/projects/poster-motion/images/qingyuan.webp',alt:'遇见青原文化海报',width:1697,height:2400}]},
+  {id:'mucha',title:'桃坞新笺·穆夏集',english:'Alphonse Mucha × Taohuawu',category:'AIGC 非遗系列海报',year:'2025',award:'2025米兰设计周中国高校设计学科师生优秀作品展 四川赛区一等奖',description:'融合桃花坞木版年画与穆夏新艺术风格，运用 AIGC 转译非遗，结合东方平面美学与欧式流动装饰，打造“东方新艺术”视觉语言，探索非遗数字化传承方式。',media:[
+    {kind:'image',src:'/projects/poster-motion/images/mucha-01.webp',alt:'桃坞新笺花开富贵海报',width:1697,height:2400},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-02.webp',alt:'桃坞新笺鲜桃枇杷满盆海报',width:1697,height:2400},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-03.webp',alt:'桃坞新笺夏花篮筐海报',width:1697,height:2400},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-04.webp',alt:'桃坞新笺牡丹双蝶海报',width:1697,height:2400},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-05.webp',alt:'桃坞新笺蟠桃知了海报',width:1697,height:2400},
+    {kind:'image',src:'/projects/poster-motion/images/mucha-06.webp',alt:'桃坞新笺八面威风海报',width:1697,height:2400},
   ]},
-  {id:'bencao',title:'本草纲目',english:'Compendium of Materia Medica',category:'字体实验海报',year:'POSTER STUDY',description:'以古籍版式、印章与药材文本为线索，尝试传统文献在现代海报中的信息重组。',media:[{kind:'image',src:'/projects/poster-motion/images/bencao.webp',alt:'本草纲目主题海报'}]},
-  {id:'yongle',title:'永乐官窑瓷器展',english:'Yongle Imperial Porcelain',category:'展览海报',year:'POSTER STUDY',description:'以克制留白与器物局部建立观看焦点，呈现瓷器展览的安静质感。',media:[{kind:'image',src:'/projects/poster-motion/images/yongle.webp',alt:'永乐官窑瓷器展览海报'}]},
-  {id:'sanxingdui',title:'三星伴月',english:'Sanxingdui',category:'文化主题海报',year:'POSTER STUDY',description:'通过文物特写、暗色肌理与纵向文字秩序，强化古蜀文明的神秘感与历史厚度。',media:[{kind:'image',src:'/projects/poster-motion/images/sanxingdui.webp',alt:'三星伴月三星堆主题海报'}]},
-  {id:'dayi',title:'北京大羿 2021 秋季',english:'Beijing Dayi Autumn 2021',category:'拍卖系列海报',year:'2021',description:'以器物轮廓、东方色彩与留白构成两张同源视觉，为不同专场建立统一识别。',media:[
-    {kind:'image',src:'/projects/poster-motion/images/dayi-01.webp',alt:'北京大羿玉堂传器海报'},
-    {kind:'image',src:'/projects/poster-motion/images/dayi-02.webp',alt:'北京大羿文人空间海报'},
+  {id:'dayi',title:'北京大羿2021',english:'Beijing Dayi 2021',category:'拍卖系列海报',year:'2021',description:'提取器物形态、东方元素与留白美学，打造两套同源视觉，分别对应两场拍卖专场。两组画面彼此呼应，在尽显器物之美的同时，各自承载独立专场主题。',media:[
+    {kind:'image',src:'/projects/poster-motion/images/dayi-01.webp',alt:'北京大羿玉堂传器海报',width:1697,height:2400},
+    {kind:'image',src:'/projects/poster-motion/images/dayi-02.webp',alt:'北京大羿文人空间海报',width:1697,height:2400},
   ]},
-  {id:'konghua',title:'空花阳焰',english:'Kūka Yōen',category:'动态海报练习',year:'MOTION STUDY',description:'以连续的节奏、形态变化与视觉残像探索静态构图在时间维度中的延展。',media:[{kind:'video',src:'/projects/poster-motion/videos/konghua.mp4',poster:'/projects/poster-motion/videos/konghua-poster.jpg',alt:'空花阳焰动态海报'}]},
-  {id:'zhiying',title:'织影流转',english:'Woven Shadows in Motion',category:'动态海报系列',year:'MOTION SERIES',description:'通过图形、光影与节奏的连续变化，将系列视觉转化为一段完整的动态观看体验。',media:[{kind:'video',src:'/projects/poster-motion/videos/zhiying.mp4',poster:'/projects/poster-motion/videos/zhiying-poster.jpg',alt:'织影流转系列动态海报'}]},
-  {id:'yongdian',title:'俑乐大典',english:'Music of the Figurines',category:'博物馆动态海报',year:'MOTION STUDY',description:'围绕成都博物馆展览主题，以动态编排连接文物形象、标题信息与展览氛围。',media:[{kind:'video',src:'/projects/poster-motion/videos/yongdian.mp4',poster:'/projects/poster-motion/videos/yongdian-poster.jpg',alt:'成都博物馆俑乐大典动态海报'}]},
+  {id:'yongle',title:'永乐官窑瓷器展',english:'Yongle Imperial Porcelain',category:'展览海报',year:'2021',description:'以克制留白与器物局部建立观看焦点，呈现瓷器展览的安静质感。',media:[{kind:'image',src:'/projects/poster-motion/images/yongle.webp',alt:'永乐官窑瓷器展览海报',width:1697,height:2400}]},
+  {id:'sanxingdui',title:'三星伴月',english:'Sanxingdui',category:'文化主题海报',year:'2021',description:'运用文物特写、暗色肌理、金色流沙元素与纵向文字排布，烘托古蜀文明的神秘感、厚重历史感。',media:[{kind:'image',src:'/projects/poster-motion/images/sanxingdui.webp',alt:'三星伴月三星堆主题海报',width:1697,height:2400}]},
+  {id:'bencao',title:'本草纲目',english:'Compendium of Materia Medica',category:'字体实验海报',year:'2021',description:'以古籍版式、印章与药材文本为线索，尝试传统文献在现代海报中的信息重组。',media:[{kind:'image',src:'/projects/poster-motion/images/bencao.webp',alt:'本草纲目主题海报',width:1697,height:2400}]},
 ];
 
 const tusiCaseMedia = [
@@ -132,24 +132,29 @@ function LazyLoopVideo({src,label}:{src:string;label:string}) {
 function PosterMotionGallery({onClose}:{onClose:()=>void}) {
   const [chapterIndex,setChapterIndex]=useState(0);
   const chapter=posterChapters[chapterIndex];
-  const move=(direction:number)=>setChapterIndex(current=>(current+direction+posterChapters.length)%posterChapters.length);
   return <section className="poster-exhibition detail-reveal" aria-label="海报与动态视觉设计画廊">
-    <header className="poster-exhibition-head"><span>PUREGAN / VISUAL ARCHIVE</span><strong>POSTER &amp; MOTION</strong><span>{String(chapterIndex+1).padStart(2,'0')} / {String(posterChapters.length).padStart(2,'0')}</span></header>
+    <header className="poster-exhibition-head">
+      <span className="detail-gallery-brand">PUREGAN</span>
+      <div className="detail-gallery-heading"><strong>POSTER &amp; MOTION ARCHIVE</strong><small>点击左侧作品名称以浏览</small></div>
+      <span aria-hidden="true"/>
+    </header>
     <nav className="poster-exhibition-index" aria-label="项目章节">
       {posterChapters.map((item,index)=><button className={index===chapterIndex?'is-active':''} type="button" onClick={()=>setChapterIndex(index)} key={item.id}><span>{String(index+1).padStart(2,'0')}</span><b>{item.title}</b></button>)}
     </nav>
     <div className={`poster-exhibition-stage media-count-${chapter.media.length}`} key={chapter.id}>
-      <div className="poster-exhibition-media">
-        {chapter.media.map(media=>media.kind==='image'?<figure key={media.src}><Image src={media.src} fill unoptimized sizes={chapter.media.length>2?'24vw':'64vw'} alt={media.alt}/></figure>:<figure className="is-video" key={media.src}><video src={media.src} poster={media.poster} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.alt}/></figure>)}
+      <div className="poster-exhibition-viewer">
+        <div className="poster-exhibition-media">
+          {chapter.media.map(media=>media.kind==='image'?<figure style={{aspectRatio:`${media.width??1697}/${media.height??2400}`}} key={media.src}><Image src={media.src} fill unoptimized sizes={chapter.media.length>2?'24vw':'64vw'} alt={media.alt}/></figure>:<figure className="is-video" style={{aspectRatio:`${media.width??16}/${media.height??9}`}} key={media.src}><video src={media.src} poster={media.poster} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.alt}/></figure>)}
+        </div>
+        <div className="poster-exhibition-progress" aria-label="画廊进度">{posterChapters.map((item,index)=><button className={index===chapterIndex?'is-active':''} type="button" onClick={()=>setChapterIndex(index)} aria-label={`查看${item.title}`} key={item.id}/>)}</div>
       </div>
       <aside className="poster-exhibition-copy">
         <div><span>{chapter.category}</span><span>{chapter.year}</span></div>
-        <h1>{chapter.english}</h1><h2>{chapter.title}</h2>
-        <p>{chapter.description}</p>
+        <h2>{chapter.title}</h2>
         {chapter.award&&<strong>{chapter.award}</strong>}
+        <p>{chapter.description}</p>
       </aside>
     </div>
-    <div className="poster-exhibition-controls"><button type="button" onClick={()=>move(-1)}>← PREV</button><div>{posterChapters.map((item,index)=><i className={index===chapterIndex?'is-active':''} key={item.id}/>)}</div><button type="button" onClick={()=>move(1)}>NEXT →</button></div>
     <button className="poster-exhibition-close" type="button" onClick={onClose} aria-label="关闭海报与动态视觉设计画廊">×</button>
   </section>;
 }
