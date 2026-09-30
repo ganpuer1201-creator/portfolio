@@ -247,6 +247,60 @@ body{--font-geist-sans:var(--font-sf);--font-geist-mono:var(--font-sf);font-fami
 
 @media(max-width:900px){.poster-exhibition-head{grid-template-columns:auto minmax(0,1fr) 48px;height:72px;padding:0 5vw}.poster-exhibition-head .detail-gallery-brand{font-size:14px}.poster-exhibition-head .detail-gallery-heading strong{max-width:52vw;font-size:11px}.poster-exhibition-head .detail-gallery-heading small{font-size:7px}.poster-exhibition-index{left:5vw;right:5vw;top:80px;bottom:auto;width:auto;gap:7px}.poster-exhibition-index button{padding:9px 12px}.poster-exhibition-index b{font-size:12px}.poster-exhibition-stage,.poster-exhibition-stage.media-count-6{left:5vw;right:5vw;top:132px;bottom:18px;display:block;overflow-y:auto}.poster-exhibition-viewer{height:52svh;min-height:330px;grid-template-rows:minmax(0,1fr) 28px}.poster-exhibition-media,.poster-exhibition-stage.media-count-6 .poster-exhibition-media{display:flex;justify-content:flex-start;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory}.poster-exhibition-media figure,.poster-exhibition-stage.media-count-2 .poster-exhibition-media figure,.poster-exhibition-stage.media-count-6 .poster-exhibition-media figure,.poster-exhibition-media .is-video{flex:0 0 auto;width:auto;height:100%;max-width:92vw;max-height:100%;aspect-ratio:var(--poster-ratio);scroll-snap-align:center}.poster-exhibition-stage.media-count-6 .poster-exhibition-media figure{width:auto;height:100%;aspect-ratio:1697/2400!important}.poster-exhibition-progress{position:sticky;left:0}.poster-exhibition-progress button{width:14px}.poster-exhibition-progress button.is-active{width:32px}.poster-exhibition-copy{padding:18px 0 28px}.poster-exhibition-copy h2{margin-top:16px;font-size:24px}.poster-exhibition-copy>strong{margin-top:7px;font-size:11px}.poster-exhibition-copy p{margin-top:12px;font-size:12px}.poster-exhibition-close{right:12px;top:12px;width:48px;height:48px;font-size:25px}}
 
+/* Preserve every poster's native proportions. The frame fills the available cell;
+   the media itself is intrinsically sized and only scales down, so it is never cropped. */
+.poster-exhibition-media figure,
+.poster-exhibition-stage.media-count-2 .poster-exhibition-media figure,
+.poster-exhibition-stage.media-count-6 .poster-exhibition-media figure,
+.poster-exhibition-media .is-video{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  aspect-ratio:auto!important;
+  overflow:visible;
+  background:transparent;
+}
+.poster-exhibition-stage.media-count-2 .poster-exhibition-media figure{
+  flex:1 1 0;
+  min-width:0;
+}
+.poster-exhibition-media figure img,
+.poster-exhibition-media figure video{
+  position:static!important;
+  display:block;
+  width:auto!important;
+  height:auto!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  background:#080808;
+}
+.poster-exhibition-stage.media-count-6 .poster-exhibition-media figure{
+  width:100%;
+  height:100%;
+}
+@media(max-width:900px){
+  .poster-exhibition-media figure,
+  .poster-exhibition-stage.media-count-2 .poster-exhibition-media figure,
+  .poster-exhibition-stage.media-count-6 .poster-exhibition-media figure,
+  .poster-exhibition-media .is-video{
+    flex:0 0 92vw;
+    width:92vw;
+    height:100%;
+    max-width:92vw;
+    scroll-snap-align:center;
+  }
+  .poster-exhibition-stage.media-count-6 .poster-exhibition-media figure{
+    flex-basis:72vw;
+    width:72vw;
+    max-width:72vw;
+  }
+}
+
 /* Figma nodes 8:239, 26:5003 and 26:5005 — rebuilt About experience. */
 .about-redesign{height:auto;min-height:900px;aspect-ratio:1920/1500;overflow:hidden;border:0;background:#111;color:#f1f0ed}
 .about-redesign>h2{left:50%;top:9.6%;z-index:6;transform:translateX(-50%);width:max-content;font-size:clamp(38px,2.92vw,56px);text-align:center}

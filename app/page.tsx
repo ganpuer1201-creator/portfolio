@@ -144,7 +144,7 @@ function PosterMotionGallery({onClose}:{onClose:()=>void}) {
     <div className={`poster-exhibition-stage media-count-${chapter.media.length}`} key={chapter.id}>
       <div className="poster-exhibition-viewer">
         <div className="poster-exhibition-media">
-          {chapter.media.map(media=>media.kind==='image'?<figure style={{aspectRatio:`${media.width??1697}/${media.height??2400}`}} key={media.src}><Image src={media.src} fill unoptimized sizes={chapter.media.length>2?'24vw':'64vw'} alt={media.alt}/></figure>:<figure className="is-video" style={{aspectRatio:`${media.width??16}/${media.height??9}`}} key={media.src}><video src={media.src} poster={media.poster} autoPlay muted loop playsInline controls preload="metadata" aria-label={media.alt}/></figure>)}
+          {chapter.media.map(media=>media.kind==='image'?<figure style={{aspectRatio:`${media.width??1697}/${media.height??2400}`}} key={media.src}><Image src={media.src} width={media.width??1697} height={media.height??2400} unoptimized sizes={chapter.media.length>2?'24vw':'64vw'} alt={media.alt}/></figure>:<figure className="is-video" style={{aspectRatio:`${media.width??16}/${media.height??9}`}} key={media.src}><video src={media.src} poster={media.poster} loop playsInline controls preload="metadata" aria-label={media.alt}/></figure>)}
         </div>
         <div className="poster-exhibition-progress" aria-label="画廊进度">{posterChapters.map((item,index)=><button className={index===chapterIndex?'is-active':''} type="button" onClick={()=>setChapterIndex(index)} aria-label={`查看${item.title}`} key={item.id}/>)}</div>
       </div>
