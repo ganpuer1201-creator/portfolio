@@ -118,7 +118,6 @@ function LazyLoopVideo({src,label}:{src:string;label:string}) {
           video.src=src;
           video.load();
         }
-        void video.play().catch(()=>undefined);
       }else{
         video.pause();
       }
@@ -126,7 +125,7 @@ function LazyLoopVideo({src,label}:{src:string;label:string}) {
     observer.observe(video);
     return ()=>observer.disconnect();
   },[src]);
-  return <video ref={videoRef} muted loop playsInline controls preload="none" aria-label={label}/>;
+  return <video ref={videoRef} loop playsInline controls preload="none" aria-label={label}/>;
 }
 
 function PosterMotionGallery({onClose}:{onClose:()=>void}) {
