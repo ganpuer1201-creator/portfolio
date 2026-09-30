@@ -675,7 +675,7 @@ export default function Home() {
           <figure><Image src={p.image} fill sizes="(max-width: 760px) 78vw, 34vw" priority={index<3} loading={index<3?undefined:'lazy'} unoptimized alt={`${p.title}项目封面`}/></figure>
           <div className="project-card-copy"><span>({String(index+1).padStart(2,'0')})</span><h3 className={p.english.startsWith('「')?'bracket-leading':undefined}>{p.english}</h3><h4>{p.title}</h4><div className="project-card-notes"><em>{p.type.split(' · ')[0]}</em><b aria-hidden="true"/><p>{p.description}</p></div><i>↗</i></div>
         </button>)}</div>
-        <p className="work-selected">SELECTED WORKS<br/>2023—2026</p>
+        <p className="work-selected">SELECTED WORKS<br/>2021—2026</p>
         <div className="work-capabilities" aria-label="设计能力">
           <p>DESIGN PRACTICE / 2026</p>
           <h2><span>VISUAL DESIGN</span><span>USER EXPERIENCE</span><span>INTERACTION DESIGN</span><span>VIBE CODING</span><span>AI EXPLORATION</span></h2>
@@ -703,11 +703,18 @@ export default function Home() {
         </div>
         <aside className="vertical-case-signature detail-reveal" aria-label={`当前项目：${activeWork.title}`}><span>{activeWork.title}</span></aside>
       </>:<>
-        <header className="detail-gallery-nav detail-reveal"><span>PUREGAN</span><strong>[ SCROLL / DRAG TO EXPLORE ]</strong><span>{activeWork.index} / {String(detailWorks.length).padStart(2,'0')}</span></header>
+        <header className="detail-gallery-nav detail-reveal">
+          <span className="detail-gallery-brand">PUREGAN</span>
+          <div className="detail-gallery-heading">
+            <strong className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</strong>
+            <small>滚动 / 拖动以浏览</small>
+          </div>
+          <span aria-hidden="true"/>
+        </header>
         <div className={`detail-track detail-reveal${isCenteredSingle?' is-centered-single':''}`} ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
           {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><DeferredSlideImage src={slide} eager={index===0} enabled={index===0||detailFirstReady} onLoad={index===0?()=>setDetailFirstReady(true):undefined} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
         </div>
-        <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h2>{activeWork.english}</h2><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
+        <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
         <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
       </>}
       {!isPosterExhibition&&<button className="detail-unified-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>}
