@@ -17,6 +17,13 @@ const workSlides = {
   poster:['/projects/poster-motion/images/cover.jpg'],
 };
 
+const marvisDemoVideos = [
+  '/projects/ai-skill/videos/marvis-01.mp4',
+  '/projects/ai-skill/videos/marvis-02.mp4',
+  '/projects/ai-skill/videos/marvis-03.mp4',
+  '/projects/ai-skill/videos/marvis-04.mp4',
+] as const;
+
 type PosterChapter = {
   id:string;
   title:string;
@@ -188,6 +195,43 @@ function DeferredSlideImage({src,alt,eager=false,enabled=true,onLoad}:{src:strin
     return ()=>observer.disconnect();
   },[eager,enabled,shouldLoad]);
   return <span className="deferred-slide-image" ref={hostRef}>{shouldLoad&&<Image src={src} fill sizes="82vw" priority={eager} fetchPriority={eager?'high':'auto'} onLoad={onLoad} unoptimized style={{objectFit:'contain'}} alt={alt}/>}</span>;
+}
+
+function MarvisDemoSlide({src,alt}:{src:string;alt:string}) {
+  const hostRef=useRef<HTMLDivElement>(null);
+  const videoRefs=useRef<Array<HTMLVideoElement|null>>([]);
+  const [active,setActive]=useState(false);
+  useEffect(()=>{
+    const host=hostRef.current;
+    if(!host)return;
+    const observer=new IntersectionObserver(entries=>{
+      const visible=Boolean(entries[0]?.isIntersecting);
+      setActive(visible);
+      videoRefs.current.forEach(video=>{
+        if(!video)return;
+        if(visible)void video.play().catch(()=>undefined);
+        else{video.pause();video.classList.remove('is-ready')}
+      });
+    },{rootMargin:'160px 0px',threshold:.04});
+    observer.observe(host);
+    return ()=>observer.disconnect();
+  },[]);
+  return <div className="marvis-demo-slide" ref={hostRef}>
+    <Image src={src} fill sizes="82vw" unoptimized style={{objectFit:'contain'}} alt={alt}/>
+    {marvisDemoVideos.map((video,index)=><video
+      className={`marvis-phone-video phone-${index+1}`}
+      ref={node=>{videoRefs.current[index]=node}}
+      src={active?video:undefined}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload={active?'auto':'none'}
+      onCanPlay={event=>event.currentTarget.classList.add('is-ready')}
+      aria-label={`Marvis 扬华寻迹功能录屏 ${index+1}`}
+      key={video}
+    />)}
+  </div>;
 }
 
 export default function Home() {
@@ -716,7 +760,7 @@ export default function Home() {
           <span aria-hidden="true"/>
         </header>
         <div className={`detail-track detail-reveal${isCenteredSingle?' is-centered-single':''}`} ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
-          {activeWork.slides.map((slide,index)=><figure className="detail-slide" key={slide}><DeferredSlideImage src={slide} eager={index===0} enabled={index===0||detailFirstReady} onLoad={index===0?()=>setDetailFirstReady(true):undefined} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>)}
+          {activeWork.slides.map((slide,index)=><figure className={`detail-slide${activeWork.index==='07'&&index===6?' has-marvis-video':''}`} key={slide}>{activeWork.index==='07'&&index===6?<MarvisDemoSlide src={slide} alt={`${activeWork.title}设计展示第${index+1}页（动态演示）`}/>:<DeferredSlideImage src={slide} eager={index===0} enabled={index===0||detailFirstReady} onLoad={index===0?()=>setDetailFirstReady(true):undefined} alt={`${activeWork.title}设计展示第${index+1}页`}/>}</figure>)}
         </div>
         <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
         <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
