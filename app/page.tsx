@@ -704,8 +704,8 @@ export default function Home() {
           <div><time>2026.04 – 2026.08</time><div><Image className="tencent-logo" src="/figma/about-redesign/tencent-logo.png" width={153} height={46} alt="Tencent 腾讯"/><p>在腾讯 PCG 商业产品部担任视觉设计实习生，参与「吐司」产品及业务项目的视觉/UI 设计，覆盖 Web 与移动端场景；协同产品、研发推进方案落地，并探索 AI 在设计生产与工作流提效中的应用。</p></div></div>
         </div></article>
         <article className="about-resume-section" data-about-reveal><h3>Project</h3><div className="about-resume-list">
+          <div><time>2026.05 – 2026.08</time><div><b>腾讯吐司官网设计项目</b><p>负责腾讯吐司官网设计，围绕产品定位与用户认知路径，完成信息架构梳理、核心页面设计与品牌视觉构建，并推动官网正式上线。上线后持续结合用户使用场景迭代体验，探索吐司 IP 动效、网页交互在官网中的应用，更直观地呈现产品价值与创作能力。</p></div></div>
           <div><time>2022.09 – 2023.06</time><div><b>九江市博物馆文创产品开发项目</b><p>针对九江博物馆文创“数量少、设计弱、缺文化底蕴”痛点，提取本土典故文化元素进行改良设计，让历史故事以实用文创形式融入日常。作品获校优秀毕业设计留校收藏，获 2 项国家级、4 项省级竞赛奖项，相关论文见刊于《地方大学应用型教育研究》。</p></div></div>
-          <div><time>2022.10 – 2023.03</time><div><b>庐山八月咖啡设计项目</b><p>该项目以独立咖啡馆品牌升级为核心，探索小众场景视觉符号构建，历时半年独立完成需求访谈、调研分析及 VI 落地设计。方案获店铺采纳落地，成果入选校级优秀设计作品集，验证商业与设计美学的融合价值。</p></div></div>
         </div></article>
         <article className="about-resume-section" data-about-reveal><h3>Rewards</h3><div className="about-rewards-list">
           <b>三好学生 / 优秀学生干部 / 优秀团干部</b><b>2023届校优秀本科毕业论文（设计）</b><p><strong>校级专业奖学金</strong><span>一等 ×3 / 二等 ×1 / 三等 ×2</span></p><p><strong>2025米兰设计周中国高校设计学科师生优秀作品展</strong><span>省一等奖</span></p><p><strong>第十届未来设计师·全国高校数字艺术设计大赛</strong><span>全国优秀奖 / 省一等奖</span></p><p><strong>第十一届未来设计师·全国高校数字艺术设计大赛</strong><span>省一等奖</span></p><p><strong>第十一届全国大学生数字媒体科技作品及创意竞赛</strong><span>全国三等奖 / 省二等奖</span></p><p><strong>第四届东方创意之星设计大赛</strong><span>全国优秀奖 / 省金奖</span></p><p><strong>2023 “井冈之星” 设计艺术创意大赛</strong><span>学生组金奖</span></p><p><strong>全国大中学生海洋文化创意设计大赛</strong><span>佳作奖</span></p><p><strong>全国高等教育美育教育成果展评</strong><span>学生组一等奖</span></p><p><strong>新生录取通知书设计活动</strong><span>二等奖</span></p>
