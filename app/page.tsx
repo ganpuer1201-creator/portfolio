@@ -141,7 +141,7 @@ function PosterMotionGallery({onClose}:{onClose:()=>void}) {
   return <section className="poster-exhibition detail-reveal" aria-label="海报与动态视觉设计画廊">
     <header className="detail-gallery-nav poster-exhibition-head">
       <span className="detail-gallery-brand">PUREGAN</span>
-      <div className="detail-gallery-heading"><strong>POSTER &amp; MOTION ARCHIVE</strong><small>点击左侧作品名称以浏览</small></div>
+      <div className="detail-gallery-heading"><strong>POSTER &amp; MOTION ARCHIVE</strong></div>
       <span aria-hidden="true"/>
     </header>
     <nav className="poster-exhibition-index" aria-label="项目章节">
@@ -755,7 +755,6 @@ export default function Home() {
           <span className="detail-gallery-brand">PUREGAN</span>
           <div className="detail-gallery-heading">
             <strong className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</strong>
-            <small>滚动 / 拖动以浏览</small>
           </div>
           <span aria-hidden="true"/>
         </header>

@@ -501,3 +501,88 @@ html:has(#contact:target){scroll-padding-top:0}
   .contact-email{font-size:12.2vw;line-height:.86;letter-spacing:-.055em}
   .contact-bottomline{grid-template-columns:1fr 1fr 1fr;gap:10px}.contact-bottomline a{justify-self:center}.contact-bottomline small{display:block;justify-self:end}
 }
+
+/* Final responsive pass: keep the detail chrome optically aligned and make every
+   project format comfortable to browse on a phone without obscuring the work. */
+html,body{max-width:100%;overflow-x:clip}
+.detail-gallery-nav,.poster-exhibition-head{grid-template-columns:1fr minmax(0,2.2fr) 1fr;align-items:center}
+.detail-gallery-brand{align-self:center;justify-self:start;line-height:1}
+.detail-gallery-heading{align-self:center;justify-self:center;gap:0}
+.detail-gallery-heading strong{line-height:1.2}
+.detail-unified-close,.poster-exhibition-close{top:14px}
+
+@media(max-width:760px){
+  :root{--mobile-gutter:5vw}
+  .cover-nav{height:64px;padding-inline:var(--mobile-gutter)}
+  .cover-logo{left:var(--mobile-gutter);top:20px}
+  .cover-menu{right:var(--mobile-gutter);top:20px;min-width:44px;min-height:44px;padding:0;text-align:right}
+  .mobile-menu{inset:64px 0 0;padding:12vw var(--mobile-gutter);overflow-y:auto}
+
+  .slogan>p{font-size:12px;line-height:1.55}
+  .about-redesign{min-height:1040px}
+  .about-summary{top:61.5%}
+  .about-summary p{font-size:15px;line-height:1.72;text-align:left}
+  .about-summary button{min-height:52px}
+
+  .work-cards{height:calc((var(--project-count) - 1)*104vh + 142vh)}
+  .card-stage{top:0;height:100svh;min-height:600px}
+  .work-manifesto{top:9.5%;max-width:88vw;white-space:normal;line-height:1.45}
+  .work-selected{bottom:2.2%}
+  .card-background{top:66%;font-size:25vw}
+  .project-card-stack{top:49.5%;width:min(76vw,340px);max-height:66svh;padding:12px}
+  .project-card-stack figure{flex-basis:39%}
+  .project-card-copy>span{font-size:10px}
+  .project-card-copy h3{font-size:clamp(25px,7.2vw,32px);line-height:1}
+  .project-card-copy h4{font-size:15px;line-height:1.2}
+  .project-card-notes em,.project-card-notes p{font-size:10px;line-height:1.5}
+
+  .detail-gallery-nav,.poster-exhibition-head{grid-template-columns:minmax(64px,1fr) minmax(0,2.15fr) minmax(48px,1fr);height:64px;padding:0 var(--mobile-gutter)}
+  .detail-gallery-brand,.poster-exhibition-head .detail-gallery-brand{font-size:13px;letter-spacing:.08em}
+  .detail-gallery-heading strong,.poster-exhibition-head .detail-gallery-heading strong{max-width:55vw;font-size:clamp(11px,3.1vw,14px);line-height:1.2;white-space:nowrap}
+  .detail-unified-close,.poster-exhibition-close{right:var(--mobile-gutter);top:10px;width:44px;height:44px;font-size:24px}
+
+  .project-detail .detail-track{inset:64px 0 236px;gap:5vw;padding:10px 3vw 14px;scroll-snap-type:x mandatory;touch-action:pan-x}
+  .project-detail .detail-slide,.project-detail .detail-slide:nth-child(even){flex:0 0 94vw;width:94vw;height:auto;max-height:calc(100svh - 324px);aspect-ratio:16/9;scroll-snap-align:center;opacity:1;transform:none}
+  .project-detail .detail-track.is-centered-single{padding-inline:3vw}
+  .project-detail .detail-track.is-centered-single .detail-slide{flex-basis:94vw;width:94vw;max-height:calc(100svh - 300px)}
+  .detail-gallery-meta{left:var(--mobile-gutter);right:var(--mobile-gutter);bottom:66px;width:auto;padding:12px 0 0;background:linear-gradient(90deg,#050505 92%,transparent)}
+  .detail-gallery-meta>span{font-size:10px}
+  .detail-gallery-meta h3{margin-bottom:8px;font-size:19px}
+  .detail-gallery-meta>p{max-width:100%;margin-bottom:10px;font-size:12px;line-height:1.55}
+  .detail-gallery-meta dt,.detail-gallery-meta dd{font-size:10px}
+  .detail-gallery-switch{right:var(--mobile-gutter);bottom:24px;gap:22px}
+  .detail-gallery-switch button{min-height:36px;font-size:11px}
+
+  .vertical-case-signature{left:8px;padding:14px 8px;border-radius:14px;font-size:10px;letter-spacing:.08em}
+  .tusi-case-stack{width:100%;box-shadow:none}
+  .tusi-case-media img,.tusi-case-media video{width:100%;height:auto}
+
+  .poster-exhibition-index{left:var(--mobile-gutter);right:var(--mobile-gutter);top:72px;padding-bottom:4px;gap:6px}
+  .poster-exhibition-index button{min-height:40px;padding:9px 12px}
+  .poster-exhibition-stage,.poster-exhibition-stage.media-count-6{left:var(--mobile-gutter);right:var(--mobile-gutter);top:122px;bottom:max(14px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain}
+  .poster-exhibition-viewer{height:48svh;min-height:280px}
+  .poster-exhibition-media figure,.poster-exhibition-stage.media-count-2 .poster-exhibition-media figure,.poster-exhibition-stage.media-count-6 .poster-exhibition-media figure,.poster-exhibition-media .is-video{flex-basis:90vw;width:90vw;max-width:90vw}
+  .poster-exhibition-stage.media-count-6 .poster-exhibition-media figure{flex-basis:70vw;width:70vw;max-width:70vw}
+  .poster-exhibition-copy{padding:18px 0 max(26px,env(safe-area-inset-bottom))}
+  .poster-exhibition-copy h2{font-size:25px}
+  .poster-exhibition-copy p{font-size:13px;line-height:1.6}
+
+  .about-details-close{right:var(--mobile-gutter)}
+  .about-details-hero{height:100svh;min-height:620px}
+  .about-details-title h2{font-size:16vw}
+  .about-resume-section{padding:56px var(--mobile-gutter)}
+  .about-resume-list p{font-size:15px;line-height:1.75;text-align:left}
+
+  .contact-screen{padding-inline:var(--mobile-gutter)}
+  .contact-email{font-size:clamp(42px,12vw,64px);line-height:.9;overflow-wrap:anywhere}
+}
+
+@media(max-width:390px){
+  .project-card-stack{width:80vw;max-height:64svh}
+  .project-card-copy h3{font-size:6.7vw}
+  .project-card-copy h4{font-size:14px}
+  .detail-gallery-heading strong,.poster-exhibition-head .detail-gallery-heading strong{max-width:50vw;font-size:10px}
+  .poster-exhibition-viewer{height:44svh;min-height:250px}
+  .about-redesign{min-height:1000px}
+  .about-summary{top:60%}
+}
