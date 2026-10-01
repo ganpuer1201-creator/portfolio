@@ -586,3 +586,62 @@ html,body{max-width:100%;overflow-x:clip}
   .about-redesign{min-height:1000px}
   .about-summary{top:60%}
 }
+
+/* Phone layout is a flowing portfolio, not a scaled desktop scroll scene. */
+@media(max-width:760px){
+  html{scroll-padding-top:64px}
+  .cover-nav{display:flex;align-items:center;justify-content:space-between}
+  .cover-logo,.cover-menu{position:static;line-height:1;display:flex;align-items:center;height:44px}
+  .cover-links{display:none}
+  .mobile-menu{position:absolute;display:flex;flex-direction:column;inset:58px 5vw auto auto;width:168px;padding:8px;background:rgba(25,25,25,.96);color:#fff;border:1px solid #555;border-radius:18px;box-shadow:0 12px 32px #0005;backdrop-filter:blur(16px)}
+  .mobile-menu a{padding:15px 18px;font-size:14px;line-height:1.2;border-radius:10px}
+  .mobile-menu a:active{background:#444}
+  .cover{height:auto;aspect-ratio:auto;min-height:0;padding-top:76px}
+  .cover-stage{position:relative;inset:auto;display:flex;flex-direction:column;padding-bottom:0}
+  .cover-portrait{position:relative;left:auto;top:auto;width:100%;height:auto;aspect-ratio:1678/941;order:1}
+  .cover-portrait img{object-fit:contain;object-position:center}
+  .hero-lines,.hero-crosshair{display:none}
+  .cover-design{left:auto;right:3vw;top:0;width:44vw;height:16vw}
+  .cover-design svg,.cover-portfolio svg{width:100%;height:100%}
+  .cover-portfolio{position:relative;left:auto;top:auto;bottom:auto;width:94%;height:19vw;padding:0;margin:0 auto;order:2}
+  .cover-caption{position:relative;left:auto;right:auto;top:auto;bottom:auto;align-self:flex-end;width:58vw;height:23vw;margin:6px 5vw 18px 0;order:3}
+  .cover-caption>span,.cover-caption>b{font-size:7vw}
+  .cover-caption small{font-size:3.1vw}
+  .cover-welcome{position:relative;left:auto;top:auto;width:100%;height:60px;order:4;display:flex;align-items:center;justify-content:center;gap:16px}
+  .cover-welcome span,.cover-welcome img{position:static;font-size:11px}
+  .cover-welcome img{width:22vw}
+  .slogan{height:auto;min-height:0;aspect-ratio:auto}
+  .slogan-stage{position:relative;top:auto;height:auto;min-height:calc(100svh - 64px);padding:35px 5vw 0;display:flex;flex-direction:column;justify-content:space-between;gap:32px}
+  .slogan-label{position:static;font-size:10px}
+  .slogan h2{position:static;font-size:7.1vw;line-height:1.6;margin:auto 0;letter-spacing:-.05em}
+  .slogan h2 .slogan-line{position:static;display:block;height:auto;opacity:1!important;transform:none!important;white-space:nowrap}
+  .slogan-stage>p{position:static;width:calc(100% + 10vw);height:auto;min-height:0;margin:0 -5vw;padding:22px 5vw;font-size:13px;line-height:1.7;white-space:normal;text-align:center}
+  .about-redesign{min-height:0;aspect-ratio:auto;padding:55px 5vw;display:flex;flex-direction:column;gap:30px}
+  .about-redesign>h2{position:relative;left:auto;top:auto;width:100%;transform:none;font-size:7vw;margin:0}
+  .about-collage{position:relative;left:auto;top:auto;width:100%;height:auto;aspect-ratio:727/768}
+  .about-collage img{object-fit:contain}
+  .about-emoji{display:none}
+  .about-summary{position:relative;left:auto;right:auto;top:auto;display:flex;flex-direction:column;gap:22px;width:100%}
+  .about-summary>i{height:1px;min-height:1px;width:100%}
+  .work-cards{height:auto;min-height:0;padding:0}
+  .card-stage{position:relative;top:auto;height:auto;min-height:0;padding-top:36px;overflow:visible}
+  .work-manifesto,.work-selected{position:relative;left:auto;top:auto;bottom:auto;transform:none;opacity:1;font-size:11px;white-space:normal;margin:0 5vw 26px}
+  .card-background{display:none}
+  .project-card-deck{position:relative;inset:auto;width:100%;height:auto;display:grid;grid-template-columns:1fr;gap:24px;padding:0 5vw 32px}
+  .project-card-stack{position:relative;left:auto;top:auto;width:100%;height:auto;max-height:none;aspect-ratio:auto;transform:none!important;opacity:1!important;pointer-events:auto!important;padding:16px;will-change:auto}
+  .project-card-stack figure{flex:none;width:100%;height:calc((90vw - 32px)*.5625);aspect-ratio:16/9;margin:0}
+  .project-card-stack figure img{object-fit:contain;transform:none}
+  .project-card-copy{flex:none;gap:0;min-height:0;height:auto}
+  .project-card-copy h3{font-size:28px;line-height:1.1;margin-top:12px;overflow-wrap:anywhere}
+  .project-card-copy h4{font-size:18px;line-height:1.5}
+  .project-card-notes{position:static;margin-top:22px;display:grid}
+  .project-card-notes em,.project-card-notes p{font-size:13px;line-height:1.65}
+  .work-capabilities{position:relative;inset:auto;min-height:70svh;clip-path:none;padding:70px 5vw;gap:28px}
+  .work-capabilities h2{font-size:8vw;line-height:1.25}
+  .work-capabilities h2 span{opacity:1;transform:none}
+  .work-capabilities>p,.work-capabilities>small{position:static;left:auto;transform:none;white-space:normal;font-size:10px;line-height:1.6}
+  .detail-gallery-heading strong,.poster-exhibition-head .detail-gallery-heading strong{white-space:normal;overflow-wrap:anywhere}
+  .detail-gallery-meta{max-height:190px;overflow-y:auto}
+  .about-details-hero>img{object-fit:contain;object-position:center}
+  .contact-screen{height:auto;min-height:calc(100svh - 64px)}
+}

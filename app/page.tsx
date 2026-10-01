@@ -113,26 +113,29 @@ const portfolioImageSources = Array.from(new Set([
   ...detailWorks.flatMap(work=>work.slides),
 ]));
 
-function LazyLoopVideo({src,label}:{src:string;label:string}) {
+function LazyLoopVideo({src,label,poster,className}:{src:string;label:string;poster?:string;className?:string}) {
   const videoRef=useRef<HTMLVideoElement>(null);
   useEffect(()=>{
     const video=videoRef.current;
     if(!video)return;
+    let visible=false;
+    const play=()=>{if(visible&&!document.hidden)void video.play().catch(()=>undefined)};
     const observer=new IntersectionObserver(entries=>{
-      const entry=entries[0];
-      if(entry.isIntersecting){
-        if(!video.src){
-          video.src=src;
-          video.load();
-        }
-      }else{
-        video.pause();
+      const next=entries[0].isIntersecting;
+      if(next&&!visible){
+        if(!video.getAttribute('src')){video.src=src;video.load()}
+        video.currentTime=0;
       }
-    },{rootMargin:'320px 0px',threshold:.01});
+      visible=next;
+      if(visible)play();else video.pause();
+    },{threshold:.05});
     observer.observe(video);
-    return ()=>observer.disconnect();
+    video.addEventListener('canplay',play);
+    const visibility=()=>{if(document.hidden)video.pause();else play()};
+    document.addEventListener('visibilitychange',visibility);
+    return ()=>{observer.disconnect();video.pause();video.removeEventListener('canplay',play);document.removeEventListener('visibilitychange',visibility)};
   },[src]);
-  return <video ref={videoRef} loop playsInline controls preload="none" aria-label={label}/>;
+  return <video ref={videoRef} className={className} poster={poster} muted loop playsInline controls preload="none" onCanPlay={event=>event.currentTarget.classList.add('is-ready')} aria-label={label}/>;
 }
 
 function PosterMotionGallery({onClose}:{onClose:()=>void}) {
@@ -150,7 +153,7 @@ function PosterMotionGallery({onClose}:{onClose:()=>void}) {
     <div className={`poster-exhibition-stage media-count-${chapter.media.length}`} key={chapter.id}>
       <div className="poster-exhibition-viewer">
         <div className="poster-exhibition-media">
-          {chapter.media.map(media=>media.kind==='image'?<figure style={{aspectRatio:`${media.width??1697}/${media.height??2400}`}} key={media.src}><Image src={media.src} width={media.width??1697} height={media.height??2400} unoptimized sizes={chapter.media.length>2?'24vw':'64vw'} alt={media.alt}/></figure>:<figure className="is-video" style={{aspectRatio:`${media.width??16}/${media.height??9}`}} key={media.src}><video src={media.src} poster={media.poster} loop playsInline controls preload="metadata" aria-label={media.alt}/></figure>)}
+          {chapter.media.map(media=>media.kind==='image'?<figure style={{aspectRatio:`${media.width??1697}/${media.height??2400}`}} key={media.src}><Image src={media.src} width={media.width??1697} height={media.height??2400} unoptimized sizes={chapter.media.length>2?'24vw':'64vw'} alt={media.alt}/></figure>:<figure className="is-video" style={{aspectRatio:`${media.width??16}/${media.height??9}`}} key={media.src}><LazyLoopVideo src={media.src} poster={media.poster} label={media.alt}/></figure>)}
         </div>
         <div className="poster-exhibition-progress" aria-label="画廊进度">{posterChapters.map((item,index)=><button className={index===chapterIndex?'is-active':''} type="button" onClick={()=>setChapterIndex(index)} aria-label={`查看${item.title}`} key={item.id}/>)}</div>
       </div>
@@ -209,10 +212,10 @@ function MarvisDemoSlide({src,alt}:{src:string;alt:string}) {
       setActive(visible);
       videoRefs.current.forEach(video=>{
         if(!video)return;
-        if(visible)void video.play().catch(()=>undefined);
-        else{video.pause();video.classList.remove('is-ready')}
+        if(visible){video.currentTime=0;void video.play().catch(()=>undefined)}
+        else video.pause();
       });
-    },{rootMargin:'160px 0px',threshold:.04});
+    },{threshold:.1});
     observer.observe(host);
     return ()=>observer.disconnect();
   },[]);
@@ -221,13 +224,13 @@ function MarvisDemoSlide({src,alt}:{src:string;alt:string}) {
     {marvisDemoVideos.map((video,index)=><video
       className={`marvis-phone-video phone-${index+1}`}
       ref={node=>{videoRefs.current[index]=node}}
-      src={active?video:undefined}
+      src={video}
       autoPlay
       muted
       loop
       playsInline
       preload={active?'auto':'none'}
-      onCanPlay={event=>event.currentTarget.classList.add('is-ready')}
+      onCanPlay={event=>{event.currentTarget.classList.add('is-ready');if(active)void event.currentTarget.play().catch(()=>undefined);else event.currentTarget.pause()}}
       aria-label={`Marvis 扬华寻迹功能录屏 ${index+1}`}
       key={video}
     />)}
@@ -235,6 +238,13 @@ function MarvisDemoSlide({src,alt}:{src:string;alt:string}) {
 }
 
 export default function Home() {
+  const [isMobile,setIsMobile]=useState(false);
+  useEffect(()=>{
+    const query=window.matchMedia('(max-width:760px)');
+    const update=()=>setIsMobile(query.matches);
+    update();query.addEventListener('change',update);
+    return ()=>query.removeEventListener('change',update);
+  },[]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeWorkIndex, setActiveWorkIndex] = useState<number | null>(null);
   const [detailMotion, setDetailMotion] = useState<'opening'|'open'|'closing'>('opening');
@@ -355,7 +365,8 @@ export default function Home() {
     detailFrameRef.current=window.requestAnimationFrame(glide);
   };
   const beginDetailDrag = (event:PointerEvent<HTMLDivElement>)=>{
-    if(event.pointerType==='touch'||event.button===0){
+    if(event.pointerType==='touch'||(event.target as HTMLElement).closest('video,button,a'))return;
+    if(event.button===0){
       event.currentTarget.setPointerCapture(event.pointerId);
       detailDragRef.current={pointerId:event.pointerId,x:event.clientX,left:event.currentTarget.scrollLeft};
       event.currentTarget.classList.add('is-dragging');
@@ -382,6 +393,12 @@ export default function Home() {
     const cards=Array.from(section.querySelectorAll<HTMLElement>('.project-card-stack'));
     const stage=section.querySelector<HTMLElement>('.card-stage');
     const skillLines=Array.from(section.querySelectorAll<HTMLElement>('.work-capabilities h2 span'));
+    if(isMobile){
+      cards.forEach(card=>card.removeAttribute('style'));
+      stage?.removeAttribute('style');
+      setWorkEnding(false);
+      return;
+    }
     let frame=0;
     let targetTimeline=0;
     let currentTimeline=0;
@@ -472,7 +489,7 @@ export default function Home() {
     window.addEventListener('scroll',request,{passive:true});
     window.addEventListener('resize',request);
     return ()=>{window.removeEventListener('scroll',request);window.removeEventListener('resize',request);if(frame)window.cancelAnimationFrame(frame)};
-  },[]);
+  },[isMobile]);
   useEffect(()=>{
     const syncTheme=()=>{
       const work=document.getElementById('work');
@@ -563,7 +580,7 @@ export default function Home() {
     const section=document.querySelector<HTMLElement>('.slogan');
     const stage=section?.querySelector<HTMLElement>('.slogan-stage');
     const lines=section?.querySelectorAll<HTMLElement>('.slogan-line');
-    if (!section || !stage || !lines?.length) return;
+    if (!section || !stage || !lines?.length || isMobile) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const smooth=(a:number,b:number,value:number)=>{
       const t=Math.max(0,Math.min(1,(value-a)/(b-a)));
@@ -609,7 +626,7 @@ export default function Home() {
     window.addEventListener('scroll',request,{passive:true});
     window.addEventListener('resize',request);
     return ()=>{window.removeEventListener('scroll',request);window.removeEventListener('resize',request);if(frame)window.cancelAnimationFrame(frame)};
-  },[]);
+  },[isMobile]);
   const trackHero = (event:PointerEvent<HTMLDivElement>)=>{
     if (event.pointerType==='touch') return;
     const frame=event.currentTarget,rect=frame.getBoundingClientRect();
@@ -655,9 +672,9 @@ export default function Home() {
       <nav className={`cover-nav ${workTheme?'work-theme':''} ${workEnding?'capabilities-theme':''}`}>
         <a className="cover-logo" href="#top">PUREGAN</a>
         <div className="cover-links"><GooeyNav items={navItems} particleCount={15} particleDistances={[90,10]} particleR={100} initialActiveIndex={-1} animationTime={600} timeVariance={300} colors={[1,2,3,1,2,3,1,4]}/></div>
-        <button className="cover-menu" onClick={()=>setMenuOpen(!menuOpen)} aria-label="打开导航">{menuOpen?'CLOSE':'MENU'}</button>
+        <button className="cover-menu" onClick={()=>setMenuOpen(!menuOpen)} aria-label="打开导航" aria-expanded={menuOpen} aria-controls="mobile-navigation">{menuOpen?'CLOSE':'MENU'}</button>
+        {menuOpen&&<div className="mobile-menu" id="mobile-navigation"><a href="#about" onClick={()=>setMenuOpen(false)}>ABOUT</a><a href="#work" onClick={()=>setMenuOpen(false)}>WORK</a><a href="#contact" onClick={()=>setMenuOpen(false)}>CONTACT</a></div>}
       </nav>
-      {menuOpen&&<div className="mobile-menu"><a href="#about" onClick={()=>setMenuOpen(false)}>ABOUT</a><a href="#work" onClick={()=>setMenuOpen(false)}>WORK</a><a href="#contact" onClick={()=>setMenuOpen(false)}>CONTACT</a></div>}
       <div className="cover-stage">
         <div className="cover-portrait" onPointerMove={trackHero} onPointerLeave={leaveHero}><Image src="/figma/hero-v2.webp" fill priority sizes="124vw" alt="甘普尔黑白肖像拼贴" /><span className="hero-crosshair" aria-hidden="true"/></div>
         <div className="hero-lines" aria-hidden="true"><i/><i/><i/><i/><i/></div>
