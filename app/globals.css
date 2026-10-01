@@ -642,6 +642,23 @@ html,body{max-width:100%;overflow-x:clip}
   .work-capabilities>p,.work-capabilities>small{position:static;left:auto;transform:none;white-space:normal;font-size:10px;line-height:1.6}
   .detail-gallery-heading strong,.poster-exhibition-head .detail-gallery-heading strong{white-space:normal;overflow-wrap:anywhere}
   .detail-gallery-meta{max-height:190px;overflow-y:auto}
-  .about-details-hero>img{object-fit:contain;object-position:center}
+  .about-details-hero>img{object-fit:cover;object-position:right center}
   .contact-screen{height:auto;min-height:calc(100svh - 64px)}
+}
+/* Mobile hero keeps both titles within the photograph; retain scroll storytelling. */
+@media(max-width:760px){
+  .cover-portfolio{position:absolute;left:0;top:43vw;bottom:auto;width:65vw;height:13vw;padding:0 2vw;margin:0;background:var(--paper)}
+  .cover-caption{width:44vw;height:15vw;margin:8px 5vw 10px 0}
+  .cover-caption>span,.cover-caption>b{font-size:4.5vw}
+  .cover-caption small{font-size:2.4vw}
+  .slogan{height:185svh;min-height:0}
+  .slogan-stage{position:sticky;top:64px;height:calc(100svh - 64px);min-height:0;padding:0;display:block}
+  .slogan-label{position:absolute;left:5vw;top:8%;font-size:10px}
+  .slogan h2{margin:0;font-size:7.1vw;line-height:1.6}
+  .slogan h2 .slogan-line{position:absolute;left:5vw;opacity:var(--line-opacity,1)!important;transform:translate3d(0,var(--line-y,0px),0)!important}
+  .slogan-stage>p{position:absolute;bottom:0;left:0;width:100%;min-height:64px;margin:0;padding:16px 5vw}
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+  .slogan{height:auto}.slogan-stage{position:relative;top:auto;height:540px}
+  .slogan h2 .slogan-line{opacity:1!important;transform:none!important}
 }

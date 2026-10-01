@@ -580,7 +580,7 @@ export default function Home() {
     const section=document.querySelector<HTMLElement>('.slogan');
     const stage=section?.querySelector<HTMLElement>('.slogan-stage');
     const lines=section?.querySelectorAll<HTMLElement>('.slogan-line');
-    if (!section || !stage || !lines?.length || isMobile) return;
+    if (!section || !stage || !lines?.length) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const smooth=(a:number,b:number,value:number)=>{
       const t=Math.max(0,Math.min(1,(value-a)/(b-a)));
@@ -594,7 +594,7 @@ export default function Home() {
     const calculate=()=>{
       const rect=section.getBoundingClientRect();
       const travel=Math.max(1,section.offsetHeight-stage.offsetHeight);
-      const progress=Math.max(0,Math.min(1,(95-rect.top)/travel));
+      const progress=Math.max(0,Math.min(1,((isMobile?64:95)-rect.top)/travel));
       lines.forEach((line,index)=>{
         const [start,end]=phases[index];
         const entering=smooth(start,start+.16,progress);
