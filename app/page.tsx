@@ -11,7 +11,7 @@ const workSlides = {
   grape:numberedSlides('grape',16),
   douyin:numberedSlides('douyin',19),
   huxi:numberedSlides('huxi',10),
-  aiSkill:Array.from({length:11},(_,index)=>`/projects/ai-skill/${String(index+1).padStart(2,'0')}.jpg`),
+  aiSkill:Array.from({length:11},(_,index)=>`/projects/ai-skill/${String(index+1).padStart(2,'0')}.webp`),
   peach:['/projects/case-studies/other/peach-power-family.webp'],
   beauty:['/projects/case-studies/other/path-of-beauty.webp'],
   poster:['/projects/poster-motion/images/cover.jpg'],
@@ -84,7 +84,7 @@ const verticalSlideDimensions:Record<string,{width:number;height:number}> = {
   '/projects/tusi-interaction/09.webp':{width:1920,height:1649},
 };
 
-const verticalCaseIndexes = new Set(['01','02','03']);
+const verticalCaseIndexes = new Set(['01','02','03','04','05','06','07']);
 const centeredSingleWorkIndexes = new Set(['09','10']);
 
 const projects = [
@@ -114,10 +114,13 @@ const portfolioImageSources = Array.from(new Set([
 ]));
 
 function LazyLoopVideo({src,label,poster,className}:{src:string;label:string;poster?:string;className?:string}) {
+  if(src.startsWith('/projects/poster-motion/videos/'))src=src.replace('.mp4','-audio.mp4');
   const videoRef=useRef<HTMLVideoElement>(null);
   useEffect(()=>{
     const video=videoRef.current;
     if(!video)return;
+    video.defaultMuted=true;
+    video.muted=true;
     let visible=false;
     const play=()=>{if(visible&&!document.hidden)void video.play().catch(()=>undefined)};
     const observer=new IntersectionObserver(entries=>{
@@ -135,7 +138,7 @@ function LazyLoopVideo({src,label,poster,className}:{src:string;label:string;pos
     document.addEventListener('visibilitychange',visibility);
     return ()=>{observer.disconnect();video.pause();video.removeEventListener('canplay',play);document.removeEventListener('visibilitychange',visibility)};
   },[src]);
-  return <video ref={videoRef} className={className} poster={poster} muted loop playsInline controls preload="none" onCanPlay={event=>event.currentTarget.classList.add('is-ready')} aria-label={label}/>;
+  return <video ref={videoRef} className={className} poster={poster} loop playsInline controls preload="metadata" onCanPlay={event=>event.currentTarget.classList.add('is-ready')} aria-label={label}/>;
 }
 
 function PosterMotionGallery({onClose}:{onClose:()=>void}) {
@@ -165,7 +168,6 @@ function PosterMotionGallery({onClose}:{onClose:()=>void}) {
         <p>{chapter.description}</p>
       </aside>
     </div>
-    <button className="poster-exhibition-close" type="button" onClick={onClose} aria-label="关闭海报与动态视觉设计画廊">×</button>
   </section>;
 }
 
@@ -228,6 +230,7 @@ function MarvisDemoSlide({src,alt}:{src:string;alt:string}) {
       src={video}
       autoPlay
       muted
+      controls
       loop
       playsInline
       preload={active?'auto':'none'}
@@ -547,6 +550,11 @@ export default function Home() {
     aboutDetailsRef.current?.scrollTo({top:0,behavior:'auto'});
     const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape')setAboutDetailsOpen(false)};
     const root=aboutDetailsRef.current;
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let parallaxFrame=0;
+    const parallax=()=>{if(reduced||parallaxFrame)return;parallaxFrame=requestAnimationFrame(()=>{parallaxFrame=0;const offset=Math.min(root?.scrollTop??0,window.innerHeight);root?.style.setProperty('--about-photo-offset',`${offset*.18}px`);root?.style.setProperty('--about-copy-offset',`${-offset*.08}px`)});};
+    root?.addEventListener('scroll',parallax,{passive:true});
+    root?.querySelectorAll<HTMLElement>('.about-resume-section').forEach(section=>section.querySelectorAll<HTMLElement>('h3,.about-resume-list>div,.about-rewards-list>*,.about-resume-compact>p,.about-resume-contact>div>*').forEach((item,index)=>{item.classList.add('about-stagger');item.style.setProperty('--reveal-delay',`${Math.min(index,6)*90}ms`)}));
     const targets=Array.from(root?.querySelectorAll<HTMLElement>('[data-about-reveal]')??[]);
     if(!('IntersectionObserver' in window))targets.forEach(target=>target.classList.add('is-visible'));
     const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>entries.forEach(entry=>{
@@ -554,7 +562,7 @@ export default function Home() {
     }),{root,threshold:.1,rootMargin:'0px 0px -8% 0px'}):null;
     targets.forEach(target=>observer?.observe(target));
     window.addEventListener('keydown',onKeyDown);
-    return()=>{document.body.style.overflow=previous;window.removeEventListener('keydown',onKeyDown);observer?.disconnect()};
+    return()=>{document.body.style.overflow=previous;window.removeEventListener('keydown',onKeyDown);observer?.disconnect();root?.removeEventListener('scroll',parallax);cancelAnimationFrame(parallaxFrame)};
   },[aboutDetailsOpen]);
   useEffect(()=>{
     if (!('IntersectionObserver' in window)) {setHelloActive(true);return}
@@ -760,12 +768,12 @@ export default function Home() {
       {isPosterExhibition?<PosterMotionGallery onClose={closeWork}/>:isVerticalCase||isMobileStack?<>
         <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef}>
           <main className={`tusi-case-stack${isMobileStack?' mobile-project-stack':''}`}>
-            {isMobile&&<header className="mobile-project-intro"><span>PROJECT {activeWork.index}</span><h2>{activeWork.title}</h2><p>{activeWork.description}</p></header>}
+            {(isMobile||['04','05','06','07'].includes(activeWork.index))&&<header className="mobile-project-intro vertical-project-intro"><span>PROJECT {activeWork.index}</span><h2>{activeWork.title}</h2><p>{activeWork.description}</p></header>}
             {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" style={{aspectRatio:`${media.width}/${media.height}`}} key={media.src}>
               <DeferredCaseImage src={media.src} width={media.width} height={media.height} eager={index===0} alt={media.alt}/>
             </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} key={media.src}>
               <LazyLoopVideo src={media.src} label={media.label}/>
-            </figure>):isMobileStack?<>{activeWork.slides.map((slide,index)=><figure className="mobile-project-slide" key={slide}>{activeWork.index==='07'&&index===6?<MarvisDemoSlide src={slide} alt={`${activeWork.title}动态演示`}/>:<img src={slide} loading={index===0?'eager':'lazy'} decoding="async" alt={`${activeWork.title}设计展示第${index+1}页`}/>}</figure>)}</>:<>
+            </figure>):isMobileStack||['04','05','06','07'].includes(activeWork.index)?<>{activeWork.slides.map((slide,index)=><figure className="mobile-project-slide" key={slide}>{activeWork.index==='07'&&index===6?<MarvisDemoSlide src={slide} alt={`${activeWork.title}动态演示`}/>:<img src={slide} loading={index===0?'eager':'lazy'} decoding="async" alt={`${activeWork.title}设计展示第${index+1}页`}/>}</figure>)}</>:<>
               {activeWork.slides.map((slide,index)=>{const dimensions=verticalSlideDimensions[slide]??{width:1600,height:900};return <figure className="tusi-case-media tusi-series-slide" style={{aspectRatio:`${dimensions.width}/${dimensions.height}`}} key={slide}><DeferredCaseImage src={slide} width={dimensions.width} height={dimensions.height} eager={index===0} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>})}
             </>}
           </main>
@@ -778,7 +786,7 @@ export default function Home() {
         <aside className="detail-gallery-meta detail-reveal"><span>PROJECT {activeWork.index}</span><h3>{activeWork.title}</h3><p>{activeWork.description}</p><dl><div><dt>YEAR</dt><dd>{activeWork.year}</dd></div><div><dt>TYPE</dt><dd>{activeWork.type}</dd></div></dl></aside>
         <div className="detail-gallery-switch detail-reveal"><button type="button" onClick={()=>showAdjacentWork(-1)}>← PREV</button><button type="button" onClick={()=>showAdjacentWork(1)}>NEXT →</button></div>
       </>}
-      {!isPosterExhibition&&<button className="detail-unified-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>}
+      <button className="detail-unified-close detail-reveal" type="button" onClick={closeWork} aria-label="关闭项目详情">×</button>
     </div>}
     <footer className="contact-screen" id="contact">
       <SideRays className="contact-rays" rayColor1="#A855F7" rayColor2="#94A3B8" speed={1.35} intensity={2.75} spread={2.45} origin="top-right" tilt={-9} saturation={1.5} blend={0.58} falloff={1.32} opacity={1}/>

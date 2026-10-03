@@ -711,4 +711,21 @@ html,body{max-width:100%;overflow-x:clip}
 .about-details-close{min-width:0;max-width:58px;min-height:58px;max-height:58px;box-sizing:border-box;aspect-ratio:1;}
 @media(max-width:760px){.about-details-close{max-width:44px;min-height:44px;max-height:44px;}}
 .poster-mobile-intro{display:none}
+.mobile-project-slide{position:relative;width:100%;height:auto;margin:0;overflow:hidden}
+.mobile-project-slide>img{display:block;width:100%;height:auto;object-fit:contain}
+.mobile-project-slide .marvis-demo-slide{position:relative;inset:auto;width:100%;height:auto;aspect-ratio:16/9}
+.vertical-project-intro{display:block;padding:48px clamp(24px,5vw,96px);background:#050505;color:#fff}
+.vertical-project-intro h2{font-size:clamp(24px,3vw,48px);margin:16px 0}
+.vertical-project-intro p{max-width:900px;line-height:1.8}
+.hero-lines i:nth-child(1),.hero-lines i:nth-child(2){animation-duration:5.5s;border-width:2.5px;opacity:.95}
+@keyframes hero-curve-drift{from{translate:-3% -2%;scale:.97}to{translate:3% 2%;scale:1.05}}
+.detail-unified-close{z-index:50;visibility:visible;pointer-events:auto}
+.about-details-hero>img{translate:0 var(--about-photo-offset,0px);will-change:translate}
+.about-details-title{translate:0 var(--about-copy-offset,0px);will-change:translate}
+.about-stagger{opacity:0;transform:translateY(26px);transition:opacity .8s var(--reveal-delay,0ms),transform .8s var(--reveal-delay,0ms)}
+.is-visible .about-stagger{opacity:1;transform:translateY(0)}
+.contact-shade{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.contact-shade:after{content:"";position:absolute;inset:0;opacity:.08;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h160v160H0z'/%3E%3C/svg%3E");background-size:160px 160px}
+@media(max-width:760px){.hero-lines{display:block}.hero-lines i:nth-child(1),.hero-lines i:nth-child(2){border-width:1.5px}.vertical-project-intro{padding:24px 5vw}.vertical-project-intro h2{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.hero-lines i{animation:none!important}.about-details-hero>img,.about-details-title{translate:none;will-change:auto}.about-stagger{opacity:1;transform:none;transition:none}}
 @media(max-width:760px){.poster-mobile-intro{display:block;padding-top:78px;background:#000}.poster-exhibition-index{position:relative;top:auto;margin-top:0}.poster-exhibition-stage{padding-top:16px}}
