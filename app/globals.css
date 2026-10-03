@@ -714,6 +714,7 @@ html,body{max-width:100%;overflow-x:clip}
 .mobile-project-slide{position:relative;width:100%;height:auto;margin:0;overflow:hidden}
 .mobile-project-slide>img{display:block;width:100%;height:auto;object-fit:contain}
 .mobile-project-slide .marvis-demo-slide{position:relative;inset:auto;width:100%;height:auto;aspect-ratio:16/9}
+.marvis-phone-video{pointer-events:auto}
 .vertical-project-intro{display:block;padding:48px clamp(24px,5vw,96px);background:#050505;color:#fff}
 .vertical-project-intro h2{font-size:clamp(24px,3vw,48px);margin:16px 0}
 .vertical-project-intro p{max-width:900px;line-height:1.8}
@@ -728,4 +729,4 @@ html,body{max-width:100%;overflow-x:clip}
 .contact-shade:after{content:"";position:absolute;inset:0;opacity:.08;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h160v160H0z'/%3E%3C/svg%3E");background-size:160px 160px}
 @media(max-width:760px){.hero-lines{display:block}.hero-lines i:nth-child(1),.hero-lines i:nth-child(2){border-width:1.5px}.vertical-project-intro{padding:24px 5vw}.vertical-project-intro h2{font-size:24px}}
 @media(prefers-reduced-motion:reduce){.hero-lines i{animation:none!important}.about-details-hero>img,.about-details-title{translate:none;will-change:auto}.about-stagger{opacity:1;transform:none;transition:none}}
-@media(max-width:760px){.poster-mobile-intro{display:block;padding-top:78px;background:#000}.poster-exhibition-index{position:relative;top:auto;margin-top:0}.poster-exhibition-stage{padding-top:16px}}
+@media(max-width:760px){.poster-exhibition{overflow-y:auto}.poster-exhibition-head{position:fixed}.poster-mobile-intro{display:block;padding-top:78px;background:#000}.poster-exhibition-index{position:relative;inset:auto;width:auto;margin:0 5vw}.poster-exhibition-stage,.poster-exhibition-stage.media-count-6{position:relative;inset:auto;margin:16px 5vw 0;padding-top:0;overflow:visible}}
