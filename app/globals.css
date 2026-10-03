@@ -645,6 +645,18 @@ html,body{max-width:100%;overflow-x:clip}
   .about-details-hero>img{object-fit:cover;object-position:right center}
   .contact-screen{height:auto;min-height:calc(100svh - 64px)}
 }
+@media(max-width:760px){
+  .mobile-project-stack{padding-top:64px;padding-bottom:32px;background:#050505}
+  .mobile-project-intro{padding:24px 5vw;color:#f5f5f5}
+  .mobile-project-intro>span{font-size:12px;color:#aaa}
+  .mobile-project-intro h2{margin:10px 0;font-size:24px}
+  .mobile-project-intro p{font-size:14px;line-height:1.7;color:#aaa}
+  .mobile-project-slide{position:relative;width:100%;height:auto;margin:0 0 12px;overflow:hidden}
+  .mobile-project-slide>img{display:block;width:100%;height:auto;object-fit:contain}
+  .mobile-project-slide .marvis-demo-slide{position:relative;inset:auto;width:100%;height:auto;aspect-ratio:16/9}
+  .about-summary button{gap:12px;min-width:210px;font-size:16px;font-weight:500}
+  .about-summary button span{width:24px;opacity:1;transform:none;font-size:23px}
+}
 /* Mobile hero keeps both titles within the photograph; retain scroll storytelling. */
 @media(max-width:760px){
   .cover-portfolio{position:absolute;left:0;top:43vw;bottom:auto;width:65vw;height:13vw;padding:0 2vw;margin:0;background:var(--paper)}

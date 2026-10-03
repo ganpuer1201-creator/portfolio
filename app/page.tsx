@@ -272,6 +272,7 @@ export default function Home() {
   const isVerticalCase=Boolean(activeWork&&verticalCaseIndexes.has(activeWork.index));
   const isCenteredSingle=Boolean(activeWork&&centeredSingleWorkIndexes.has(activeWork.index));
   const isPosterExhibition=activeWork?.index==='08';
+  const isMobileStack=isMobile&&!isVerticalCase&&!isPosterExhibition&&!isCenteredSingle;
   const captureCardOrigin = (card:HTMLElement)=>{
     const rect=card.getBoundingClientRect();
     const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
@@ -700,7 +701,7 @@ export default function Home() {
       <div className="about-summary">
         <div className="about-name"><Image src="/figma/about-redesign/artist-emoji.png" width={32} height={32} alt=""/><b>Puregan</b><span>甘普尔</span></div>
         <i aria-hidden="true"/>
-        <div><p>我是INTJ-A 射手座，兼具理性与感性，也不乏天马行空的想象力——擅长以视觉设计提升用户体验，注重细节，随和好沟通，自驱力强。热爱设计行业，乐于突破职能边界，从长期价值的角度思考设计，并持续探索 AIGC 在设计中的应用。</p><button type="button" onClick={()=>setAboutDetailsOpen(true)}>Read More<span>↗</span></button></div>
+        <div><p>我是INTJ-A 射手座，兼具理性与感性，也不乏天马行空的想象力——擅长以视觉设计提升用户体验，注重细节，随和好沟通，自驱力强。热爱设计行业，乐于突破职能边界，从长期价值的角度思考设计，并持续探索 AIGC 在设计中的应用。</p><button type="button" aria-label="查看个人详细介绍" onClick={()=>setAboutDetailsOpen(true)}>{isMobile?'了解更多 · Read More':'Read More'}<span aria-hidden="true">↗</span></button></div>
       </div>
     </section>
 
@@ -754,14 +755,15 @@ export default function Home() {
         <figure><Image src={activeWork.image} fill sizes="40vw" priority unoptimized alt=""/></figure>
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
-      {isPosterExhibition?<PosterMotionGallery onClose={closeWork}/>:isVerticalCase?<>
+      {isPosterExhibition?<PosterMotionGallery onClose={closeWork}/>:isVerticalCase||isMobileStack?<>
         <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef}>
-          <main className="tusi-case-stack">
+          <main className={`tusi-case-stack${isMobileStack?' mobile-project-stack':''}`}>
+            {isMobileStack&&<header className="mobile-project-intro"><span>PROJECT {activeWork.index}</span><h2>{activeWork.title}</h2><p>{activeWork.description}</p></header>}
             {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" style={{aspectRatio:`${media.width}/${media.height}`}} key={media.src}>
               <DeferredCaseImage src={media.src} width={media.width} height={media.height} eager={index===0} alt={media.alt}/>
             </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} key={media.src}>
               <LazyLoopVideo src={media.src} label={media.label}/>
-            </figure>):<>
+            </figure>):isMobileStack?<>{activeWork.slides.map((slide,index)=><figure className="mobile-project-slide" key={slide}>{activeWork.index==='07'&&index===6?<MarvisDemoSlide src={slide} alt={`${activeWork.title}动态演示`}/>:<img src={slide} loading={index===0?'eager':'lazy'} decoding="async" alt={`${activeWork.title}设计展示第${index+1}页`}/>}</figure>)}</>:<>
               {activeWork.slides.map((slide,index)=>{const dimensions=verticalSlideDimensions[slide]??{width:1600,height:900};return <figure className="tusi-case-media tusi-series-slide" style={{aspectRatio:`${dimensions.width}/${dimensions.height}`}} key={slide}><DeferredCaseImage src={slide} width={dimensions.width} height={dimensions.height} eager={index===0} alt={`${activeWork.title}设计展示第${index+1}页`}/></figure>})}
             </>}
           </main>
