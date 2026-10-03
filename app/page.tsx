@@ -147,6 +147,7 @@ function PosterMotionGallery({onClose}:{onClose:()=>void}) {
       <div className="detail-gallery-heading"><strong>POSTER &amp; MOTION ARCHIVE</strong></div>
       <span aria-hidden="true"/>
     </header>
+    <header className="mobile-project-intro poster-mobile-intro"><span>PROJECT 08</span><h2>海报与动效视觉设计</h2><p>{detailWorks.find(work=>work.index==='08')?.description}</p></header>
     <nav className="poster-exhibition-index" aria-label="项目章节">
       {posterChapters.map((item,index)=><button className={index===chapterIndex?'is-active':''} type="button" onClick={()=>setChapterIndex(index)} key={item.id}><span>{String(index+1).padStart(2,'0')}</span><b>{item.title}</b></button>)}
     </nav>
@@ -272,7 +273,7 @@ export default function Home() {
   const isVerticalCase=Boolean(activeWork&&verticalCaseIndexes.has(activeWork.index));
   const isCenteredSingle=Boolean(activeWork&&centeredSingleWorkIndexes.has(activeWork.index));
   const isPosterExhibition=activeWork?.index==='08';
-  const isMobileStack=isMobile&&!isVerticalCase&&!isPosterExhibition&&!isCenteredSingle;
+  const isMobileStack=isMobile&&!isVerticalCase&&!isPosterExhibition;
   const captureCardOrigin = (card:HTMLElement)=>{
     const rect=card.getBoundingClientRect();
     const radius=Number.parseFloat(window.getComputedStyle(card).borderRadius)||24;
@@ -673,16 +674,16 @@ export default function Home() {
       <nav className={`cover-nav ${workTheme?'work-theme':''} ${workEnding?'capabilities-theme':''}`}>
         <a className="cover-logo" href="#top">PUREGAN</a>
         <div className="cover-links"><GooeyNav items={navItems} particleCount={15} particleDistances={[90,10]} particleR={100} initialActiveIndex={-1} animationTime={600} timeVariance={300} colors={[1,2,3,1,2,3,1,4]}/></div>
-        <button className="cover-menu" onClick={()=>setMenuOpen(!menuOpen)} aria-label="打开导航" aria-expanded={menuOpen} aria-controls="mobile-navigation">{menuOpen?'CLOSE':'MENU'}</button>
+        <button className={`cover-menu${menuOpen?' is-open':''}`} onClick={()=>setMenuOpen(!menuOpen)} aria-label={menuOpen?'关闭导航':'打开导航'} aria-expanded={menuOpen} aria-controls="mobile-navigation"><i/><i/><i/></button>
         {menuOpen&&<div className="mobile-menu" id="mobile-navigation"><a href="#about" onClick={()=>setMenuOpen(false)}>ABOUT</a><a href="#work" onClick={()=>setMenuOpen(false)}>WORK</a><a href="#contact" onClick={()=>setMenuOpen(false)}>CONTACT</a></div>}
       </nav>
       <div className="cover-stage">
-        <div className="cover-portrait" onPointerMove={trackHero} onPointerLeave={leaveHero}><Image src="/figma/hero-v2.webp" fill priority sizes="124vw" alt="甘普尔黑白肖像拼贴" /><span className="hero-crosshair" aria-hidden="true"/></div>
+        <div className="cover-portrait" onPointerMove={trackHero} onPointerLeave={leaveHero}><Image src={isMobile?'/figma/mobile-hero/portrait.png':'/figma/hero-v2.webp'} fill priority sizes="124vw" alt="甘普尔黑白肖像拼贴" /><span className="hero-crosshair" aria-hidden="true"/></div>
         <div className="hero-lines" aria-hidden="true"><i/><i/><i/><i/><i/></div>
-        <h1 className="cover-design"><StrokeText text="DESIGN" strokeColor="#A78BFA" fillColor="#000000" strokeWidth={1.4} drawDuration={1.6} fillDelay={0.2} stagger={0.05} fontSize={140} letterSpacing={-7} viewWidth={700} viewHeight={210}/></h1>
+        <h1 className="cover-design">{isMobile?'DESIGN':<StrokeText text="DESIGN" strokeColor="#A78BFA" fillColor="#000000" strokeWidth={1.4} drawDuration={1.6} fillDelay={0.2} stagger={0.05} fontSize={140} letterSpacing={-7} viewWidth={700} viewHeight={210}/>}</h1>
         <div className="cover-caption"><span>個</span><small>（INDIVIDUAL /<br/>-PORTFOLIO）</small><span>人</span><b>設計</b><b>作品集</b></div>
-        <div className="cover-portfolio"><StrokeText text="PORTFOLIO" strokeColor="#A78BFA" fillColor="#000000" strokeWidth={1.4} drawDuration={1.6} fillDelay={0.2} stagger={0.05} fontSize={125.33} letterSpacing={-6.27} viewWidth={920} viewHeight={188}/></div>
-        <a className="cover-welcome" href="#slogan"><span>WELCOME TO MY WONDERLAND</span><Image src="/figma/hero-arrow-v2.svg" width={270} height={8} alt=""/></a>
+        <div className="cover-portfolio">{isMobile?'PORTFOLIO':<StrokeText text="PORTFOLIO" strokeColor="#A78BFA" fillColor="#000000" strokeWidth={1.4} drawDuration={1.6} fillDelay={0.2} stagger={0.05} fontSize={125.33} letterSpacing={-6.27} viewWidth={920} viewHeight={188}/>}</div>
+        <a className="cover-welcome" href="#slogan"><span>WELCOME TO MY WONDERLAND</span><Image src={isMobile?'/figma/mobile-hero/welcome-arrow.svg':'/figma/hero-arrow-v2.svg'} width={270} height={8} alt=""/></a>
       </div>
     </section>
 
@@ -701,12 +702,12 @@ export default function Home() {
       <div className="about-summary">
         <div className="about-name"><Image src="/figma/about-redesign/artist-emoji.png" width={32} height={32} alt=""/><b>Puregan</b><span>甘普尔</span></div>
         <i aria-hidden="true"/>
-        <div><p>我是INTJ-A 射手座，兼具理性与感性，也不乏天马行空的想象力——擅长以视觉设计提升用户体验，注重细节，随和好沟通，自驱力强。热爱设计行业，乐于突破职能边界，从长期价值的角度思考设计，并持续探索 AIGC 在设计中的应用。</p><button type="button" aria-label="查看个人详细介绍" onClick={()=>setAboutDetailsOpen(true)}>{isMobile?'了解更多 · Read More':'Read More'}<span aria-hidden="true">↗</span></button></div>
+        <div><p>我是INTJ-A 射手座，兼具理性与感性，也不乏天马行空的想象力——擅长以视觉设计提升用户体验，注重细节，随和好沟通，自驱力强。热爱设计行业，乐于突破职能边界，从长期价值的角度思考设计，并持续探索 AIGC 在设计中的应用。</p><button type="button" aria-label="查看个人详细介绍" onClick={()=>setAboutDetailsOpen(true)}>Read More<span aria-hidden="true">↗</span></button></div>
       </div>
     </section>
 
     {aboutDetailsOpen&&<div className="about-details" ref={aboutDetailsRef} role="dialog" aria-modal="true" aria-label="Puregan 个人经历详情">
-      <button className="about-details-close" type="button" onClick={()=>setAboutDetailsOpen(false)} aria-label="关闭个人经历详情">CLOSE</button>
+      <button className="about-details-close" type="button" onClick={()=>setAboutDetailsOpen(false)} aria-label="关闭个人经历详情">×</button>
       <section className="about-details-hero">
         <Image src="/figma/about-redesign/readmore-hero.webp" fill priority unoptimized sizes="100vw" alt="Puregan 个人肖像"/>
         <div className="about-details-gradient" aria-hidden="true"/>
@@ -755,10 +756,11 @@ export default function Home() {
         <figure><Image src={activeWork.image} fill sizes="40vw" priority unoptimized alt=""/></figure>
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
+      {!isPosterExhibition&&<header className="detail-gallery-nav detail-reveal"><span className="detail-gallery-brand">PUREGAN</span><div className="detail-gallery-heading"><strong>{activeWork.english}</strong></div><span aria-hidden="true"/></header>}
       {isPosterExhibition?<PosterMotionGallery onClose={closeWork}/>:isVerticalCase||isMobileStack?<>
         <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef}>
           <main className={`tusi-case-stack${isMobileStack?' mobile-project-stack':''}`}>
-            {isMobileStack&&<header className="mobile-project-intro"><span>PROJECT {activeWork.index}</span><h2>{activeWork.title}</h2><p>{activeWork.description}</p></header>}
+            {isMobile&&<header className="mobile-project-intro"><span>PROJECT {activeWork.index}</span><h2>{activeWork.title}</h2><p>{activeWork.description}</p></header>}
             {activeWork.index==='01'?tusiCaseMedia.map((media,index)=>media.kind==='image'?<figure className="tusi-case-media" style={{aspectRatio:`${media.width}/${media.height}`}} key={media.src}>
               <DeferredCaseImage src={media.src} width={media.width} height={media.height} eager={index===0} alt={media.alt}/>
             </figure>:<figure className={`tusi-case-media tusi-case-video${index===tusiCaseMedia.length-1?' is-final':''}`} key={media.src}>
@@ -770,13 +772,6 @@ export default function Home() {
         </div>
         <aside className="vertical-case-signature detail-reveal" aria-label={`当前项目：${activeWork.title}`}><span>{activeWork.title}</span></aside>
       </>:<>
-        <header className="detail-gallery-nav detail-reveal">
-          <span className="detail-gallery-brand">PUREGAN</span>
-          <div className="detail-gallery-heading">
-            <strong className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</strong>
-          </div>
-          <span aria-hidden="true"/>
-        </header>
         <div className={`detail-track detail-reveal${isCenteredSingle?' is-centered-single':''}`} ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
           {activeWork.slides.map((slide,index)=><figure className={`detail-slide${activeWork.index==='07'&&index===6?' has-marvis-video':''}`} key={slide}>{activeWork.index==='07'&&index===6?<MarvisDemoSlide src={slide} alt={`${activeWork.title}设计展示第${index+1}页（动态演示）`}/>:<DeferredSlideImage src={slide} eager={index===0} enabled={index===0||detailFirstReady} onLoad={index===0?()=>setDetailFirstReady(true):undefined} alt={`${activeWork.title}设计展示第${index+1}页`}/>}</figure>)}
         </div>
