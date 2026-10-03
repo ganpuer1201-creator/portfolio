@@ -708,5 +708,7 @@ html,body{max-width:100%;overflow-x:clip}
   .cover-menu.is-open i:last-child{transform:translateY(-6px) rotate(-45deg)}
   .slogan-label i{width:6.933vw;background:transparent url('/figma/mobile-hero/label-line.svg') center/100% 100% no-repeat}
 }
+.about-details-close{min-width:0;max-width:58px;min-height:58px;max-height:58px;box-sizing:border-box;aspect-ratio:1;}
+@media(max-width:760px){.about-details-close{max-width:44px;min-height:44px;max-height:44px;}}
 .poster-mobile-intro{display:none}
 @media(max-width:760px){.poster-mobile-intro{display:block;padding-top:78px;background:#000}.poster-exhibition-index{position:relative;top:auto;margin-top:0}.poster-exhibition-stage{padding-top:16px}}
