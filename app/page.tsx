@@ -147,7 +147,7 @@ function PosterMotionGallery({onClose}:{onClose:()=>void}) {
   return <section className="poster-exhibition detail-reveal" aria-label="海报与动态视觉设计画廊">
     <header className="detail-gallery-nav poster-exhibition-head">
       <span className="detail-gallery-brand">PUREGAN</span>
-      <div className="detail-gallery-heading"><strong>POSTER &amp; MOTION ARCHIVE</strong></div>
+      <div className="detail-gallery-heading"><strong>POSTER &amp; MOTION ARCHIVE</strong><small>海报与动效视觉设计</small></div>
       <span aria-hidden="true"/>
     </header>
     <header className="mobile-project-intro poster-mobile-intro"><span>PROJECT 08</span><h2>海报与动效视觉设计</h2><p>{detailWorks.find(work=>work.index==='08')?.description}</p></header>
@@ -575,6 +575,17 @@ export default function Home() {
     return ()=>{sectionObserver.disconnect();sections.forEach(section=>section.classList.remove('motion-ready'))};
   },[]);
   useEffect(()=>{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
+    const groups=[['.about-name','.about-summary p','.about-summary button'],['.contact-topline','.contact-main','.contact-bottomline']];
+    const items=groups.flatMap(selectors=>selectors.flatMap((selector,index)=>Array.from(document.querySelectorAll<HTMLElement>(selector)).map(item=>{item.classList.add('scroll-sequence');item.style.setProperty('--sequence-delay',`${index*160}ms`);return item})));
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('sequence-visible');observer.unobserve(entry.target)}}),{threshold:.15});
+    items.forEach(item=>observer.observe(item));
+    let frame=0;
+    const update=()=>{if(frame)return;frame=requestAnimationFrame(()=>{frame=0;const about=document.querySelector<HTMLElement>('.about-redesign');if(about){const rect=about.getBoundingClientRect();if(rect.bottom>0&&rect.top<innerHeight)about.style.setProperty('--collage-parallax',`${Math.max(-22,Math.min(22,(innerHeight*.35-rect.top)*.035))}px`);}})};
+    window.addEventListener('scroll',update,{passive:true});update();
+    return()=>{observer.disconnect();window.removeEventListener('scroll',update);cancelAnimationFrame(frame);items.forEach(item=>item.classList.remove('scroll-sequence','sequence-visible'))};
+  },[]);
+  useEffect(()=>{
     if (!helloActive) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {setHelloPhase('enter');return}
     const timers:number[]=[];
@@ -764,7 +775,7 @@ export default function Home() {
         <figure><Image src={activeWork.image} fill sizes="40vw" priority unoptimized alt=""/></figure>
         <div><span>({activeWork.index})</span><h3 className={activeWork.english.startsWith('「')?'bracket-leading':undefined}>{activeWork.english}</h3><h4>{activeWork.title}</h4></div>
       </div>
-      {!isPosterExhibition&&<header className="detail-gallery-nav detail-reveal"><span className="detail-gallery-brand">PUREGAN</span><div className="detail-gallery-heading"><strong>{activeWork.english}</strong></div><span aria-hidden="true"/></header>}
+      {!isPosterExhibition&&<header className="detail-gallery-nav detail-reveal"><span className="detail-gallery-brand">PUREGAN</span><div className="detail-gallery-heading"><strong>{activeWork.english}</strong><small>{activeWork.title}</small></div><span aria-hidden="true"/></header>}
       {isPosterExhibition?<PosterMotionGallery onClose={closeWork}/>:isVerticalCase||isMobileStack?<>
         <div className="tusi-case-scroll detail-reveal" ref={verticalScrollRef}>
           <main className={`tusi-case-stack${isMobileStack?' mobile-project-stack':''}`}>
@@ -778,7 +789,6 @@ export default function Home() {
             </>}
           </main>
         </div>
-        <aside className="vertical-case-signature detail-reveal" aria-label={`当前项目：${activeWork.title}`}><span>{activeWork.title}</span></aside>
       </>:<>
         <div className={`detail-track detail-reveal${isCenteredSingle?' is-centered-single':''}`} ref={detailTrackRef} onScroll={event=>syncHorizontalSlides(event.currentTarget)} onWheel={moveDetail} onPointerDown={beginDetailDrag} onPointerMove={dragDetail} onPointerUp={endDetailDrag} onPointerCancel={endDetailDrag}>
           {activeWork.slides.map((slide,index)=><figure className={`detail-slide${activeWork.index==='07'&&index===6?' has-marvis-video':''}`} key={slide}>{activeWork.index==='07'&&index===6?<MarvisDemoSlide src={slide} alt={`${activeWork.title}设计展示第${index+1}页（动态演示）`}/>:<DeferredSlideImage src={slide} eager={index===0} enabled={index===0||detailFirstReady} onLoad={index===0?()=>setDetailFirstReady(true):undefined} alt={`${activeWork.title}设计展示第${index+1}页`}/>}</figure>)}
