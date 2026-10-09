@@ -11,7 +11,7 @@ const workSlides = {
   grape:numberedSlides('grape',16),
   douyin:numberedSlides('douyin',19),
   huxi:numberedSlides('huxi',10),
-  aiSkill:Array.from({length:11},(_,index)=>`/projects/ai-skill/${String(index+1).padStart(2,'0')}.webp`),
+  aiSkill:Array.from({length:11},(_,index)=>index===7?'/projects/ai-skill/08-corrected-20261009.webp':`/projects/ai-skill/${String(index+1).padStart(2,'0')}.webp`),
   peach:['/projects/case-studies/other/peach-power-family.webp'],
   beauty:['/projects/case-studies/other/path-of-beauty.webp'],
   poster:['/projects/poster-motion/images/cover.jpg'],
