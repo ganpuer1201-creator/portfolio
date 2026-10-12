@@ -739,7 +739,7 @@ export default function Home() {
           <div><time>2019.09 – 2023.06</time><div><b>九江学院</b><p>视觉传达设计 学士学位</p></div></div>
         </div></article>
         <article className="about-resume-section" data-about-reveal><h3>Internship</h3><div className="about-resume-list">
-          <div><time>2026.04 – 2026.08</time><div><Image className="tencent-logo" src="/figma/about-redesign/tencent-logo.png" width={153} height={46} alt="Tencent 腾讯"/><p>在腾讯 PCG 商业产品部担任视觉设计实习生，参与「吐司」产品及业务项目的视觉/UI 设计，覆盖 Web 与移动端场景；协同产品、研发推进方案落地，并探索 AI 在设计生产与工作流提效中的应用。</p></div></div>
+          <div><time>2026.04 – 2026.08</time><div><Image className="tencent-logo" src="/figma/about-redesign/tencent-logo.png" width={153} height={46} alt="Tencent 腾讯"/><p>在腾讯 PCG 商业产品部担任视觉设计实习生，参与「吐司」产品及业务项目的视觉/UI 设计，覆盖 Web 与移动端场景；协同产品、研发推进方案落地，并探索 AI 在设计生产与工作流提效中的应用。通过实习转正答辩，已获腾讯留用意向书。</p></div></div>
         </div></article>
         <article className="about-resume-section" data-about-reveal><h3>Project</h3><div className="about-resume-list">
           <div><time>2026.05 – 2026.08</time><div><b>腾讯吐司官网设计项目</b><p>负责腾讯吐司官网设计，围绕产品定位与用户认知路径，完成信息架构梳理、核心页面设计与品牌视觉构建，并推动官网正式上线。上线后持续结合用户使用场景迭代体验，探索吐司 IP 动效、网页交互在官网中的应用，更直观地呈现产品价值与创作能力。</p></div></div>
